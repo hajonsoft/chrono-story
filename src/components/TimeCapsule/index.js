@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import React from "react";
 
 const TimeCapsule = ({ title, description, year, image, photos }) => {
@@ -26,11 +18,7 @@ const TimeCapsule = ({ title, description, year, image, photos }) => {
         <Stack direction={"row"} spacing={1}>
           {photos?.map((photo) => (
             <Stack key={photo.title} sx={{ width: 96 }}>
-              <img
-                height="64"
-                src={photo.image}
-                alt={photo.title}
-              />
+              <img height="64" src={photo.image} alt={photo.title} />
               <Box>
                 <Typography variant={"body2"}>{photo.title}</Typography>
               </Box>

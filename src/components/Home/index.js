@@ -1,8 +1,8 @@
-import React from "react";
-import Button from "@mui/material/Button";
-import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth"; // Import Firebase authentication modules
+import { initializeApp } from "firebase/app";
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"; // Import Firebase authentication modules
+import React, { useState } from "react";
+import Welcome from "./Welcome";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDOdTR0_d_VM1yVe_9g0Kc1Cer5ka8K46k",
@@ -21,18 +21,20 @@ const auth = getAuth(app); // Initialize Firebase authentication service
 const googleAuthProvider = new GoogleAuthProvider(); // Create Google authentication provider
 
 const Home = () => {
-    const handleLogin = () => {
-        // Sign in with Google using Firebase
-        signInWithPopup(auth, googleAuthProvider)
-          .then((result) => {
-            // Handle successful login
-            console.log("Logged in with Google:", result.user);
-          })
-          .catch((error) => {
-            // Handle errors
-            console.error("Error logging in with Google:", error);
-          });
-      };
+  const [user, setUser] = useState(null);
+  const handleLogin = () => {
+    // Sign in with Google using Firebase
+    signInWithPopup(auth, googleAuthProvider)
+      .then((result) => {
+        // Handle successful login
+        console.log("Logged in with Google:", result.user);
+        setUser(result.user);
+      })
+      .catch((error) => {
+        // Handle errors
+        console.error("Error logging in with Google:", error);
+      });
+  };
 
   // Function to handle Google sign-up
   const handleSignUp = () => {
@@ -41,6 +43,7 @@ const Home = () => {
       .then((result) => {
         // Handle successful sign-up
         console.log("Signed up with Google:", result.user);
+        setUser(result.user);
       })
       .catch((error) => {
         // Handle errors
@@ -50,19 +53,11 @@ const Home = () => {
 
   return (
     <div>
-      <h1>Welcome to Chrono Story</h1>
-      <p>
-        Chrono Story is a website that allows you to build your own timeline
-        with a focus on retrieving Quranic verses and commenting on them. Create
-        timelines for various historical events, such as the ancient Egyptian
-        timeline.
-      </p>
-      <Button variant="contained" color="primary" onClick={handleLogin}>
-        Login
-      </Button>
-      <Button variant="contained" color="secondary" onClick={handleSignUp}>
-        Sign Up
-      </Button>
+      <Welcome
+        handleLogin={handleLogin}
+        handleSignUp={handleSignUp}
+        user={user}
+      />
     </div>
   );
 };
