@@ -1,4 +1,4 @@
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"; // Import Firebase authentication modules
 import React, { useState } from "react";
