@@ -1,0 +1,214 @@
+{
+    "timeline":[
+       {
+          "year":-300000,
+          "title":"خلق البشر",
+          "description":"Humans created by God.",
+          "image":"https://i.guim.co.uk/img/media/df6eba62024da3f69428980382dbe3281396ee69/326_296_5114_3068/master/5114.jpg?width=1200&height=1200&quality=85&auto=format&fit=crop&s=864794484c0f84428581b923d54ac28b",
+          "photos":[
+             {
+                "title":"Nindertal",
+                "image":"https://images.newscientist.com/wp-content/uploads/2017/04/21123619/flo_face.jpg?crop=4:3,smart&width=1200&height=900&upscale=true"
+             },
+             {
+                "title":"Homo erectus",
+                "image":"https://media.cnn.com/api/v1/images/stellar/prod/230613163034-02-lucy-fossil-bipedalism-sculpture-australopithecus-afarensis.jpg?c=16x9&q=h_833,w_1480,c_fill"
+             }
+          ]
+       },
+       {
+          "year":-100000,
+          "title":"Adam",
+          "description":"Adam was the first Chosen Human.",
+          "image":"https://picsum.photos/400/300"
+       },
+       {
+          "year":-6000,
+          "title":"إدريس Enokh",
+          "description":"Description of Prophet إدريس",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Islamic_Calligraphy_of_Idris_%28Enoch%29.svg/1200px-Islamic_Calligraphy_of_Idris_%28Enoch%29.svg.png"
+       },
+       {
+          "year":-4000,
+          "title":"نوح Noah - NUT",
+          "description":"Description of Prophet نوح",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Noah%27s_Ark_on_Mount_Ararat_by_Simon_de_Myle.jpg/1200px-Noah%27s_Ark_on_Mount_Ararat_by_Simon_de_Myle.jpg",
+          "photos":[
+             {
+                "title":"Flood",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/NoahsArkFlood.jpg/1200px-NoahsArkFlood.jpg"
+             },
+             {
+                "title":"Ark",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Noah%27s_Ark.jpg/1200px-Noah%27s_Ark.jpg"
+             },
+             {
+                "title":"Nut and Geb",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/Nut_and_Geb.jpg/1200px-Nut_and_Geb.jpg"
+             }
+          ]
+       },
+       {
+          "year":-2000,
+          "title":"إبراهيم",
+          "description":"Description of Prophet إبراهيم",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Abraham_and_the_Angels_Binding_the_Book_of_Heaven%2C_ink_and_color_on_paper_manuscript%2C_Mughal_Empire%2C_1630s.jpg/1200px-Abraham_and_the_Angels_Binding_the_Book_of_Heaven%2C_ink_and_color_on_paper_manuscript%2C_Mughal_Empire%2C_1630s.jpg"
+       },
+       {
+          "year":-1000,
+          "title":"اسماعيل Ismail",
+          "description":"Description of Prophet اسماعيل",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Meeting_of_Abraham_and_Isma%C3%ABl.jpg/1200px-Meeting_of_Abraham_and_Isma%C3%ABl.jpg"
+       },
+       {
+          "year":-500,
+          "title":"اسحق Isaac",
+          "description":"Description of Prophet اسحق",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Isaac_blessing_Jacob_-_William_Brack.jpg/1200px-Isaac_blessing_Jacob_-_William_Brack.jpg"
+       },
+       {
+          "year":-400,
+          "title":"يعقوب Jacob",
+          "description":"Prophet يعقوب, or Jacob, is a key figure in Abrahamic religions, known for his vision of a ladder reaching into heaven and for being the father of the Twelve Tribes of Israel.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Jacob_Gives_Thanks_to_God_-_Elihu_Vedder.jpg/1200px-Jacob_Gives_Thanks_to_God_-_Elihu_Vedder.jpg",
+          "photos":[
+             {
+                "title":"Jacob's Ladder",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/57/Jacob%27s_Dream.jpg/1200px-Jacob%27s_Dream.jpg"
+             },
+             {
+                "title":"Blessing of Jacob",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Jacob_blessing_Joseph%27s_sons.jpg/1200px-Jacob_blessing_Joseph%27s_sons.jpg"
+             }
+          ]
+       },
+       {
+          "year":-300,
+          "title":"يوسف Joseph",
+          "description":"Prophet يوسف, or Joseph, is known for his interpretation of dreams and his rise from being sold into slavery by his brothers to becoming a powerful figure in ancient Egypt.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Jan_van_Luyken_-_Joseph_and_his_Brethren.jpg/1200px-Jan_van_Luyken_-_Joseph_and_his_Brethren.jpg",
+          "photos":[
+             {
+                "title":"Joseph's Coat of Many Colors",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/JosephsCoat.jpg/1200px-JosephsCoat.jpg"
+             },
+             {
+                "title":"Joseph Interpreting Pharaoh's Dream",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Joseph_in_prison_with_his_brothers.jpg/1200px-Joseph_in_prison_with_his_brothers.jpg"
+             }
+          ]
+       },
+       {
+          "year":-200,
+          "title":"موسى Moses",
+          "description":"Prophet موسى, or Moses, is a central figure in Judaism, Christianity, and Islam. He is best known for leading the Israelites out of slavery in Egypt and receiving the Ten Commandments on Mount Sinai.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/G%C3%A9rard_de_Lairesse_-_The_Finding_of_Moses_-_WGA12383.jpg/1200px-G%C3%A9rard_de_Lairesse_-_The_Finding_of_Moses_-_WGA12383.jpg",
+          "photos":[
+             {
+                "title":"Moses and the Burning Bush",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Moses_and_the_Burning_Bush_-_Exodus_Chapter_3_%28Bible_Illustrations_by_Sweet_Media%29.jpg/1200px-Moses_and_the_Burning_Bush_-_Exodus_Chapter_3_%28Bible_Illustrations_by_Sweet_Media%29.jpg"
+             },
+             {
+                "title":"Crossing of the Red Sea",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Moses_Crosses_the_Red_Sea.jpg/1200px-Moses_Crosses_the_Red_Sea.jpg"
+             }
+          ]
+       },
+       {
+          "year":-100,
+          "title":"طالوت Thotmosis I",
+          "description":"Prophet طالوت, or Saul, was the first king of Israel, chosen by the prophet Samuel. He led the Israelites in battles against their enemies, including the Philistines.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/David_and_Saul_edit1.jpg/1200px-David_and_Saul_edit1.jpg",
+          "photos":[
+             {
+                "title":"Saul Anointed by Samuel",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Saul_anointed_by_Samuel.jpg/1200px-Saul_anointed_by_Samuel.jpg"
+             },
+             {
+                "title":"Saul's Conversion on the Road to Damascus",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Conversion_on_the_Way_to_Damascus-Caravaggio_%28c.1601-02%29.jpg/1200px-Conversion_on_the_Way_to_Damascus-Caravaggio_%28c.1601-02%29.jpg"
+             }
+          ]
+       },
+       {
+          "year":0,
+          "title":"داوود Thotmosis II",
+          "description":"Prophet داوود, or David, is revered as a righteous king and a poet in Judaism, Christianity, and Islam. He is best known for defeating the giant Goliath and for his Psalms.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Rembrandt_Harmensz._van_Rijn_-_King_David_in_Prayer_-_Google_Art_Project.jpg/1200px-Rembrandt_Harmensz._van_Rijn_-_King_David_in_Prayer_-_Google_Art_Project.jpg",
+          "photos":[
+             {
+                "title":"David and Goliath",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Meester_van_de_David_en_Goliath_minnende_vrouwen_LACMA_56.15.2_%281_of_2%29.jpg/1200px-Meester_van_de_David_en_Goliath_minnende_vrouwen_LACMA_56.15.2_%281_of_2%29.jpg"
+             },
+             {
+                "title":"David Plays the Harp for Saul",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Joseph_Ferdinand_Lancrenon_-_David_plays_the_harp_for_King_Saul_%281842%29.jpg/1200px-Joseph_Ferdinand_Lancrenon_-_David_plays_the_harp_for_King_Saul_%281842%29.jpg"
+             }
+          ]
+       },
+       {
+          "year":300,
+          "title":"سليمان Solomon",
+          "description":"Prophet سليمان, or Solomon, is renowned for his wisdom, wealth, and construction of the First Temple in Jerusalem. He is considered one of the greatest kings of Israel.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/SolomonAndTheQueenOfSheba.jpg/1200px-SolomonAndTheQueenOfSheba.jpg",
+          "photos":[
+             {
+                "title":"Solomon and the Queen of Sheba",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/SolomonAndTheQueenOfSheba.jpg/1200px-SolomonAndTheQueenOfSheba.jpg"
+             },
+             {
+                "title":"Solomon's Judgment",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Solomon\\_Judges\\_in\\_the\\_Gate\\_James\\_Tissot\\_Brooklyn\\_Museum.jpg/1200px-Solomon\\_Judges\\_in\\_the\\_Gate\\_James\\_Tissot\\_Brooklyn\\_Museum.jpg"
+             }
+          ]
+       },
+       {
+          "year":600,
+          "title":"آل عمران Ikhnaton and Nefertiti",
+          "description":"Prophet آل عمران, or Amram's family, is associated with the biblical figures Amram, Jochebed, Moses, Aaron, and Miriam, who played significant roles in the exodus of the Israelites from ancient Egypt.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/The\\_Israelites\\_are\\_led\\_out\\_of\\_Egypt\\_after\\_the\\_Passover.png/1200px-The\\_Israelites\\_are\\_led\\_out\\_of\\_Egypt\\_after\\_the\\_Passover.png",
+          "photos":[
+             {
+                "title":"Exodus from Egypt",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/The\\_Israelites\\_are\\_led\\_out\\_of\\_Egypt\\_after\\_the\\_Passover.png/1200px-The\\_Israelites\\_are\\_led\\_out\\_of\\_Egypt\\_after\\_the\\_Passover.png"
+             },
+             {
+                "title":"Moses Strikes the Rock",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Moses\\_Strikes\\_the\\_Rock\\_LACMA\\_M.88.91.385d.jpg/1200px-Moses\\_Strikes\\_the\\_Rock\\_LACMA\\_M.88.91.385d.jpg"
+             }
+          ]
+       },
+       {
+          "year":900,
+          "title":"عيسي Jesus, Atun",
+          "description":"Prophet عيسي, or Jesus, is a central figure in Christianity and is believed by Muslims to be a prophet. He is considered the Son of God by Christians and a messenger of God by Muslims.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Sanzio\\_01\\_Magdalen\\_01\\_detail\\_crop.jpg/1200px-Sanzio\\_01\\_Magdalen\\_01\\_detail\\_crop.jpg",
+          "photos":[
+             {
+                "title":"The Last Supper",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Fra\\_Angelico\\_000.jpg/1200px-Fra\\_Angelico\\_000.jpg"
+             },
+             {
+                "title":"The Healing of the Blind Man",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/El\\_Greco\\_-\\_Christ\\_Healing\\_the\\_Blind\\_-\\_WGA10514.jpg/1200px-El\\_Greco\\_-\\_Christ\\_Healing\\_the\\_Blind\\_-\\_WGA10514.jpg"
+             }
+          ]
+       },
+       {
+          "year":1200,
+          "title":"محمد Mohamed",
+          "description":"Prophet محمد, or Muhammad, is the founder of Islam and the last prophet according to Islamic belief. He received revelations from God through the angel Gabriel and spread the message of Islam.",
+          "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Seerah\\_of\\_Prophet\\_Muhammad\\_12\\_Year\\_of\\_Grief\\_%281%29.png/1200px-Seerah\\_of\\_Prophet\\_Muhammad\\_12\\_Year\\_of\\_Grief\\_%281%29.png",
+          "photos":[
+             {
+                "title":"The Night Journey",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Mohammed\\_receives\\_revelation\\_from\\_the\\_Angel\\_Gabriel.jpg/1200px-Mohammed\\_receives\\_revelation\\_from\\_the\\_Angel\\_Gabriel.jpg"
+             },
+             {
+                "title":"The Prophet's Mosque",
+                "image":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Prophet\\_Mosque\\_03.jpg/1200px-Prophet\\_Mosque\\_03.jpg"
+             }
+          ]
+       }
+    ]
+ }
