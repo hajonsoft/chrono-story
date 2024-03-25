@@ -13,14 +13,19 @@ const TimeLine = () => {
     year: "",
     image: "",
     photos: [],
+    verses: [],
   });
 
   const handleSetMode = (mode) => {
     if (mode === "save") {
-      console.log("📢[index.jsx:20]: newCapsule: ", newCapsule);
       addEntryToArray(newCapsule);
     }
     setMode(mode);
+  }
+
+  const handleEditCapsule = (capsule) => {
+    setNewCapsule(capsule);
+    setMode("edit");
   }
 
   return (
@@ -33,7 +38,7 @@ const TimeLine = () => {
           setParentMode={setMode}
         />
       )}
-      <TimelineDisplay mode={mode} />
+      <TimelineDisplay mode={mode} onEditCapsule={handleEditCapsule}/>
     </div>
   );
 };

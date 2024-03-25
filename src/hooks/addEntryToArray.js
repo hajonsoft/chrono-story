@@ -1,36 +1,38 @@
-import { doc, getDoc, updateDoc, getFirestore } from "firebase/firestore";
+import { doc, runTransaction, getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-const addEntryToArray = async (newEntry) => {
+const addEntryToTimeline = async (newEntry) => {
   try {
     const auth = getAuth();
     const firestore = getFirestore();
+
     // Get the current user's UID
     const userId = auth.currentUser.uid;
 
-    // Reference to the document containing the array
+    // Reference to the document containing the timeline array
     const userDocRef = doc(firestore, `users/${userId}`);
 
-    // Fetch the document data
-    const docSnapshot = await getDoc(userDocRef);
-    if (!docSnapshot.exists()) {
-      console.error("Document does not exist");
-    //   return;
-    }
+    // Run a transaction to ensure atomicity
+    await runTransaction(firestore, async (transaction) => {
+      // Fetch the document data within the transaction
+      const userDocSnapshot = await transaction.get(userDocRef);
 
-    // Extract the existing array from the document data
-    const existingArray = docSnapshot.data().timeLine || [];
+      // Initialize the timeline array or retrieve existing one
+      const timeline = userDocSnapshot.exists()
+        ? userDocSnapshot.data().timeline || []
+        : [];
 
-    // Add the new entry to the array
-    existingArray.push(newEntry);
+      // Append the new entry to the timeline array
+      timeline.push(newEntry);
 
-    // Update the document with the modified array
-    await updateDoc(userDocRef, { timeLine: existingArray });
+      // Update the document with the modified timeline array
+      transaction.update(userDocRef, { timeline: timeline });
+    });
 
-    console.log("Entry added to the array successfully");
+    console.log("Entry added to the timeline successfully");
   } catch (error) {
-    console.error("Error adding entry to the array: ", error);
+    console.error("Error adding entry to the timeline: ", error);
   }
 };
 
-export default addEntryToArray;
+export default addEntryToTimeline;
