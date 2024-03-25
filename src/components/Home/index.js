@@ -21,10 +21,18 @@ const auth = getAuth(app); // Initialize Firebase authentication service
 const googleAuthProvider = new GoogleAuthProvider(); // Create Google authentication provider
 
 const Home = () => {
-  const handleLogin = () => {
-    // Code to handle login with Firebase
-    console.log("Logging in...");
-  };
+    const handleLogin = () => {
+        // Sign in with Google using Firebase
+        signInWithPopup(auth, googleAuthProvider)
+          .then((result) => {
+            // Handle successful login
+            console.log("Logged in with Google:", result.user);
+          })
+          .catch((error) => {
+            // Handle errors
+            console.error("Error logging in with Google:", error);
+          });
+      };
 
   // Function to handle Google sign-up
   const handleSignUp = () => {
