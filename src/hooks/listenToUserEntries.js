@@ -13,14 +13,16 @@ const listenToUserEntries = (callback) => {
     }
 
     // Reference to the user's entries collection
-    const entriesRef = collection(firestore, `users/${user.uid}/entries`);
+    const entriesRef = collection(firestore, `users/${user.uid}/timeLine`);
 
     // Set up a listener for changes to the entries collection
     const unsubscribe = onSnapshot(entriesRef, (snapshot) => {
       const entriesArray = [];
       snapshot.forEach((doc) => {
+        console.log("📢[listenToUserEntries.js:22]: doc: ", doc);
         entriesArray.push({ id: doc.id, ...doc.data() });
       });
+      console.log("📢[listenToUserEntries.js:25]: entriesArray: ", entriesArray);
       callback(entriesArray); // Call the provided callback with the updated entries array
     });
 
