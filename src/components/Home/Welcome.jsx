@@ -5,20 +5,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Avatar, Stack } from "@mui/material";
 import TimeLine from "../TimeLine";
-import listenToUserEntries from "../../hooks/listenToUserEntries";
 
 const Welcome = ({ user, handleLogin, handleSignUp }) => {
-  useEffect(() => {
-    const unsubscribe =
-      user &&
-      listenToUserEntries((entries) => {
-        console.log("User entries: ", entries);
-      });
-
-    return () => {
-      unsubscribe && unsubscribe();
-    };
-  }, [user]);
 
   return (
     <div>
