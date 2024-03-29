@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Button, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import Tags from "./Tags";
 
 const QuranVerse = ({newCapsule , setNewCapsule}) => {
@@ -34,9 +34,9 @@ const QuranVerse = ({newCapsule , setNewCapsule}) => {
   };
 
   return (
-    <div>
+    <Box sx={{width: '100%'}} display={"flex"} justifyContent={"flex-end"}>
       <TextField
-        label="Reference (ayah number or surah:ayah)"
+        label="surah:ayah"
         variant="outlined"
         value={reference}
         onChange={(e) => setReference(e.target.value)}
@@ -51,7 +51,7 @@ const QuranVerse = ({newCapsule , setNewCapsule}) => {
       </Button>
 
       <Tags tags={newCapsule.verses} handleDelete={handleDeleteVerse} />
-    </div>
+    </Box>
   );
 };
 

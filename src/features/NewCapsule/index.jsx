@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   Button,
@@ -9,12 +9,12 @@ import {
   TextField,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import Actions from "./components/Actions";
-import Tags from "./components/Tags";
-import QuranVerse from "./components/QuranVerse";
 import { useFilePicker } from "use-file-picker";
-
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import Actions from "./components/Actions";
+import QuranVerse from "./components/QuranVerse";
+import Tags from "./components/Tags";
+import uploadImage from "../../hooks/uploadImage";
+import { Photo } from "@mui/icons-material";
 
 const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
   const [mode, setMode] = useState("new");
@@ -23,7 +23,17 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
   const { openFilePicker, filesContent, loading } = useFilePicker({
     accept: ".jpg, .jpeg, .png, .gif",
   });
-  console.log("📢[index.jsx:25]: filesContent: ", filesContent);
+  console.log("📢[index.jsx:23]: loading: ", loading);
+
+  useEffect(() => {
+    async function saveImage() {
+      await uploadImage(filesContent[0]);
+    }
+
+    if (!loading && filesContent && filesContent.length > 0) {
+      saveImage();
+    }
+  }, [filesContent, loading]);
 
   const handleDelete = (tagToDelete) => {
     setNewCapsule({
@@ -50,16 +60,13 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
     <Card elevation={6} sx={{ padding: "16px 32px 32px 16px", margin: "16px" }}>
       {mode === "new" && (
         <CardContent>
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            spacing={1}
-            sx={{ height: "100%" }}
-          >
+          <Stack direction={"row"} spacing={1} sx={{ height: "100%" }}>
             <Box sx={{ width: "13%", height: "100%" }}>
-              <Stack sx={{ height: "280px" }}>
+              <Stack sx={{ height: "100%" }}>
                 <TextField
                   label="Year"
+                  type="number"
+                  variant="filled"
                   fullWidth
                   value={newCapsule.year}
                   onChange={(e) =>
@@ -69,8 +76,14 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                     })
                   }
                 />
-
-                <button onClick={() => openFilePicker()}>Select files</button>
+                <Box sx={{ height: "100%" }}>
+                  <Button
+                    onClick={() => openFilePicker()}
+                    startIcon={<Photo />}
+                  >
+                    Image
+                  </Button>
+                </Box>
                 {/* Display the selected image (optional) */}
                 {newCapsule.image && (
                   <img
@@ -90,6 +103,7 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                 <Stack direction={"row"} alignItems={"center"}>
                   <TextField
                     label="Title"
+                    placeholder="Capsule title"
                     value={newCapsule.title}
                     fullWidth
                     onChange={(e) =>

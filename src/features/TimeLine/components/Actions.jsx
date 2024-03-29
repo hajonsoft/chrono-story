@@ -43,6 +43,7 @@ const Actions = ({ mode, setMode }) => {
         <Stack direction={"row"} spacing={1}>
           <Button
             variant="outlined"
+            color="secondary"
             onClick={handleCancelEntry}
             startIcon={<Cancel />}
           >
