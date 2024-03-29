@@ -26,7 +26,13 @@ const addEntryToTimeline = async (newEntry) => {
       timeLine.push(newEntry);
 
       // Update the document with the modified timeline array
-      transaction.update(userDocRef, { timeLine: [...timeLine] });
+      if (userDocSnapshot.exists()) {
+        // Document exists, update it
+        transaction.update(userDocRef, { timeLine: [...timeLine] });
+      } else {
+        // Document doesn't exist, set it with the new data
+        transaction.set(userDocRef, { timeLine: [...timeLine] });
+      }
     });
 
     console.log("Entry added to the timeline successfully");

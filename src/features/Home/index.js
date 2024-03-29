@@ -1,7 +1,8 @@
 // import { getAnalytics } from "firebase/analytics";
+import React, { useState, useEffect } from "react";
+
 import { initializeApp } from "firebase/app";
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"; // Import Firebase authentication modules
-import React, { useState } from "react";
+import { GoogleAuthProvider, getAuth, signInWithPopup, onAuthStateChanged } from "firebase/auth"; // Import Firebase authentication modules
 import Welcome from "./Welcome";
 
 const firebaseConfig = {
@@ -22,6 +23,24 @@ const googleAuthProvider = new GoogleAuthProvider(); // Create Google authentica
 
 const Home = () => {
   const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Check if the user is already authenticated when the component mounts
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, update the user state
+        console.log("User is already signed in:", user);
+        setUser(user);
+      } else {
+        // No user is signed in, reset the user state
+        setUser(null);
+      }
+    });
+
+    // Clean up the listener when the component unmounts
+    return () => unsubscribe();
+  }, []); // Empty dependency array ensures the effect runs only once on mount
+
   const handleLogin = () => {
     // Sign in with Google using Firebase
     signInWithPopup(auth, googleAuthProvider)
@@ -41,24 +60,19 @@ const Home = () => {
     // Sign up with Google using Firebase
     signInWithPopup(auth, googleAuthProvider)
       .then((result) => {
-        // Handle successful sign-up
-        console.log("Signed up with Google:", result.user);
         setUser(result.user);
       })
       .catch((error) => {
-        // Handle errors
         console.error("Error signing up with Google:", error);
       });
   };
 
   return (
-    <div>
-      <Welcome
-        handleLogin={handleLogin}
-        handleSignUp={handleSignUp}
-        user={user}
-      />
-    </div>
+    <Welcome
+      handleLogin={handleLogin}
+      handleSignUp={handleSignUp}
+      user={user}
+    />
   );
 };
 
