@@ -20,7 +20,7 @@ const TimelineDisplay = ({
     const userId = auth.currentUser.uid;
     const unsubscribe = onSnapshot(doc(firestore, "users", userId), (doc) => {
       const timeLineData = doc.data()?.timeLine || [];
-      setTimeline(timeLineData);
+      setTimeline(timeLineData.sort((a, b) => a.year - b.year));
     });
 
     return unsubscribe;
