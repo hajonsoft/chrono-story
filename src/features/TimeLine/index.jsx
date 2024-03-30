@@ -4,25 +4,25 @@ import saveNewEntry from "../../hooks/saveNewEntry";
 import saveExistingEntry from "../../hooks/saveExistingEntry";
 import NewCapsule from "../NewCapsule";
 import Actions from "./components/Actions";
-import TimelineDisplay from "./components/Display";
+import TimelineDisplay from "./components/time-line-display";
 import { Paper } from "@mui/material";
 import deleteEntry from "../../hooks/deleteEntry";
 
 const TimeLine = () => {
   const [mode, setMode] = useState("default");
-  const [newCapsule, setNewCapsule] = useState({});
+  const [activeCapsule, setActiveCapsule] = useState({});
 
   const handleSetMode = (mode) => {
     if (mode === "save") {
-      saveNewEntry(newCapsule);
+      saveNewEntry(activeCapsule);
       setMode(mode);
     }
     if (mode === "update") {
-      saveExistingEntry(newCapsule.id, newCapsule);
+      saveExistingEntry(activeCapsule.id, activeCapsule);
       setMode("default");
     }
     if (mode === "add") {
-      setNewCapsule({
+      setActiveCapsule({
         id: new Date().getTime(),
         year: "",
         title: "",
@@ -37,7 +37,7 @@ const TimeLine = () => {
   };
 
   const handleEditCapsule = (capsule) => {
-    setNewCapsule(capsule);
+    setActiveCapsule(capsule);
     setMode("edit");
   };
 
@@ -55,10 +55,10 @@ const TimeLine = () => {
       }}
     >
       <Actions mode={mode} setMode={handleSetMode} />
-      {(mode === "add" || mode === "edit") && (
+      {mode === "add" && (
         <NewCapsule
-          newCapsule={newCapsule}
-          setNewCapsule={setNewCapsule}
+          newCapsule={activeCapsule}
+          setNewCapsule={setActiveCapsule}
           setParentMode={setMode}
         />
       )}
@@ -66,6 +66,9 @@ const TimeLine = () => {
         mode={mode}
         onEdit={handleEditCapsule}
         onDelete={handleDeleteCapsule}
+        newCapsule={activeCapsule}
+        setNewCapsule={setActiveCapsule}
+        setMode={setMode}
       />
     </Paper>
   );

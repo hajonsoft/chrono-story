@@ -18,11 +18,8 @@ const PublicHome = () => {
     // Check if the user is already authenticated when the component mounts
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, update the user state
-        console.log("User is already signed in:", user);
         setUser(user);
       } else {
-        // No user is signed in, reset the user state
         setUser(null);
       }
     });

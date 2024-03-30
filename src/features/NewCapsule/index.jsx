@@ -89,143 +89,137 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
 
   return (
     <Card elevation={6} sx={{ padding: "16px 32px 32px 16px", margin: "16px" }}>
-      {mode === "new" && (
-        <CardContent>
-          <Stack direction={"row"} spacing={1} sx={{ height: "100%" }}>
-            <Box sx={{ width: "13%", height: "100%" }}>
-              <Stack sx={{ height: "100%" }}>
+      <CardContent>
+        <Stack direction={"row"} spacing={1} sx={{ height: "100%" }}>
+          <Box sx={{ width: "13%", height: "100%" }}>
+            <Stack sx={{ height: "100%" }}>
+              <TextField
+                label="Year"
+                type="number"
+                variant="filled"
+                fullWidth
+                value={newCapsule.year}
+                onChange={(e) =>
+                  setNewCapsule({
+                    ...newCapsule,
+                    year: e.target.value,
+                  })
+                }
+              />
+              <Box sx={{ height: "100%" }}>
+                <Button
+                  onClick={() => {
+                    setPhotoMode("main");
+                    openFilePicker();
+                  }}
+                  startIcon={<Photo />}
+                >
+                  Image
+                </Button>
+              </Box>
+              {/* Display the selected image (optional) */}
+              {newCapsule.image && (
+                <img
+                  src={newCapsule.image}
+                  alt="Selected"
+                  style={{
+                    maxWidth: "100px",
+                    maxHeight: "100px",
+                    marginTop: "10px",
+                  }}
+                />
+              )}
+            </Stack>
+          </Box>
+          <Box sx={{ width: "87%" }}>
+            <Stack spacing={1}>
+              <Stack direction={"row"} alignItems={"center"}>
                 <TextField
-                  label="Year"
-                  type="number"
-                  variant="filled"
+                  label="Title"
+                  placeholder="Capsule title"
+                  value={newCapsule.title}
                   fullWidth
-                  value={newCapsule.year}
                   onChange={(e) =>
                     setNewCapsule({
                       ...newCapsule,
-                      year: e.target.value,
+                      title: e.target.value,
                     })
                   }
                 />
-                <Box sx={{ height: "100%" }}>
-                  <Button
-                    onClick={() => {
-                      setPhotoMode("main");
-                      openFilePicker();
-                    }}
-                    startIcon={<Photo />}
-                  >
-                    Image
-                  </Button>
-                </Box>
-                {/* Display the selected image (optional) */}
-                {newCapsule.image && (
-                  <img
-                    src={newCapsule.image}
-                    alt="Selected"
-                    style={{
-                      maxWidth: "100px",
-                      maxHeight: "100px",
-                      marginTop: "10px",
-                    }}
-                  />
-                )}
-              </Stack>
-            </Box>
-            <Box sx={{ width: "87%" }}>
-              <Stack spacing={1}>
-                <Stack direction={"row"} alignItems={"center"}>
+                <Stack
+                  direction={"row"}
+                  alignItems={"center"}
+                  spacing={1}
+                  sx={{ width: "50%" }}
+                >
+                  <Tags tags={newCapsule.tags} handleDelete={handleDeleteTag} />
                   <TextField
-                    label="Title"
-                    placeholder="Capsule title"
-                    value={newCapsule.title}
-                    fullWidth
-                    onChange={(e) =>
-                      setNewCapsule({
-                        ...newCapsule,
-                        title: e.target.value,
-                      })
-                    }
+                    label="Add Tag"
+                    variant="outlined"
+                    value={newTag}
+                    onChange={(e) => setNewTag(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        handleAddTag();
+                      }
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                        <button
+                          onClick={handleAddTag}
+                          style={{
+                            border: "none",
+                            background: "transparent",
+                            cursor: "pointer",
+                          }}
+                        >
+                          Add
+                        </button>
+                      ),
+                    }}
                   />
-                  <Stack
-                    direction={"row"}
-                    alignItems={"center"}
-                    spacing={1}
-                    sx={{ width: "50%" }}
-                  >
-                    <Tags
-                      tags={newCapsule.tags}
-                      handleDelete={handleDeleteTag}
-                    />
-                    <TextField
-                      label="Add Tag"
-                      variant="outlined"
-                      value={newTag}
-                      onChange={(e) => setNewTag(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleAddTag();
-                        }
-                      }}
-                      InputProps={{
-                        endAdornment: (
-                          <button
-                            onClick={handleAddTag}
-                            style={{
-                              border: "none",
-                              background: "transparent",
-                              cursor: "pointer",
-                            }}
-                          >
-                            Add
-                          </button>
-                        ),
-                      }}
-                    />
-                  </Stack>
-                </Stack>
-                <TextField
-                  label="Description"
-                  fullWidth
-                  value={newCapsule.description}
-                  onChange={(e) =>
-                    setNewCapsule({
-                      ...newCapsule,
-                      description: e.target.value,
-                    })
-                  }
-                />
-                <QuranVerse
-                  newCapsule={newCapsule}
-                  setNewCapsule={setNewCapsule}
-                />
-                <Stack direction={"row"}>
-                  {newCapsule.photos?.map((photo) => (
-                    <img
-                      key={photo.image}
-                      src={photo.image}
-                      alt={photo.title}
-                      style={{ width: "50px", cursor: "pointer" }}
-                      onClick={() => window.open(photo.image)}
-                    />
-                  ))}
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleAddPhoto}
-                  >
-                    Add Photo
-                  </Button>
                 </Stack>
               </Stack>
-            </Box>
-          </Stack>
-          <CardActions>
-            <Actions mode={mode} setMode={handleSetMode} />
-          </CardActions>
-        </CardContent>
-      )}
-      {mode === "add" && <div>View mode</div>}
+              <TextField
+                label="Description"
+                fullWidth
+                value={newCapsule.description}
+                onChange={(e) =>
+                  setNewCapsule({
+                    ...newCapsule,
+                    description: e.target.value,
+                  })
+                }
+              />
+              <QuranVerse
+                newCapsule={newCapsule}
+                setNewCapsule={setNewCapsule}
+              />
+              <Stack direction={"row"}>
+                {newCapsule.photos?.map((photo) => (
+                  <img
+                    key={photo.image}
+                    src={photo.image}
+                    alt={photo.title}
+                    style={{ width: "50px", cursor: "pointer" }}
+                    onClick={() => window.open(photo.image)}
+                  />
+                ))}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddPhoto}
+                >
+                  Add Photo
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
+        <CardActions>
+          <Actions mode={mode} setMode={handleSetMode} />
+        </CardActions>
+      </CardContent>
     </Card>
   );
 };
