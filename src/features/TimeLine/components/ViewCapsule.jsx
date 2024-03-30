@@ -9,6 +9,8 @@ import {
   Stack,
   Typography
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const ViewCapsule = ({ entry,  onEdit, onDelete}) => {
 
@@ -66,13 +68,15 @@ const ViewCapsule = ({ entry,  onEdit, onDelete}) => {
                 variant="contained"
                 color="primary"
                 onClick={() => onEdit(entry)}
+                startIcon={<EditIcon />}
               >
                 Edit
               </Button>
               <Button
-                variant="contained"
+                variant="outlined"
                 color="secondary"
                 onClick={() => onDelete(entry)}
+                startIcon={<DeleteIcon />}
               >
                 Delete
               </Button>

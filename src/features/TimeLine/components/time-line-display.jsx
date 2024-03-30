@@ -34,7 +34,7 @@ const TimelineDisplay = ({
             <ViewCapsule entry={entry} onEdit={onEdit} onDelete={onDelete} />
           )}
           {mode === "edit" && entry.id === newCapsule.id && (
-            <Box sx={{ mb: 2, border: '2px solid purple' }}>
+            <Box sx={{ mb: 2, border: '2px dotted purple' }}>
             <NewCapsule newCapsule={newCapsule} setNewCapsule={setNewCapsule} setMode={setMode} />
             </Box>
           )}

@@ -10,6 +10,7 @@ import deleteEntry from "../../hooks/deleteEntry";
 
 const TimeLine = () => {
   const [mode, setMode] = useState("default");
+  console.log("mode", mode);
   const [activeCapsule, setActiveCapsule] = useState({});
 
   const handleSetMode = (mode) => {
@@ -32,6 +33,9 @@ const TimeLine = () => {
         photos: [],
         verses: [],
       });
+      setMode(mode);
+    }
+    if (mode === "default") {
       setMode(mode);
     }
   };

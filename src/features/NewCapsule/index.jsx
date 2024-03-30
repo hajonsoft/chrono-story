@@ -206,9 +206,10 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                   />
                 ))}
                 <Button
-                  variant="contained"
-                  color="primary"
+                  variant="outlined"
+                  color="secondary"
                   onClick={handleAddPhoto}
+                  startIcon={<Photo />}
                 >
                   Add Photo
                 </Button>

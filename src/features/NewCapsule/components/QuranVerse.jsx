@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import { Box, Button, TextField } from "@mui/material";
 import Tags from "./Tags";
+import FormatAlignJustifyIcon from '@mui/icons-material/FormatAlignJustify';
 
 const QuranVerse = ({ newCapsule, setNewCapsule }) => {
   const [reference, setReference] = useState("");
@@ -50,9 +51,12 @@ const QuranVerse = ({ newCapsule, setNewCapsule }) => {
         style={{ marginRight: "10px" }}
       />
       <Button
-        variant="contained"
+        variant="outlined"
+        color="secondary"
         onClick={handleAddVerse}
         style={{ marginBottom: "10px" }}
+        startIcon={<FormatAlignJustifyIcon />}
+        size="small"
       >
         Add
       </Button>

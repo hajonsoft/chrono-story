@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 
 const Actions = ({ mode, setMode }) => {
   return (
-    <Stack direction={"row"} justifyContent={"flex-end"} alignItems={"center"}>
+    <Stack direction={"row"} justifyContent={"flex-end"} alignItems={"center"} mb={2}>
       {(mode === "default" || mode === "save") && (
         <Button
           onClick={() => setMode("add")}
