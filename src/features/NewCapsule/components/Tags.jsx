@@ -1,15 +1,14 @@
 import { Chip } from '@mui/material';
 import React from 'react';
 
-const Tags = ({ tags, handleDelete }) => {
+const Tags = ({ tags, handleDelete, getTagText }) => {
   return (
     <div>
-      {/* Display tags as chips */}
       {tags?.map((tag, index) => (
         <Chip
           key={index}
-          label={tag}
-          onDelete={() => handleDelete(tag)} // onDelete function to remove the tag
+          label={getTagText ? getTagText(tag) : tag}
+          onDelete={() => handleDelete(tag)}
           style={{ margin: 5 }}
         />
       ))}

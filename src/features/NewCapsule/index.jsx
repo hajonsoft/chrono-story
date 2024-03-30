@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+import { Photo } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -10,32 +11,62 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useFilePicker } from "use-file-picker";
+import uploadImage from "../../hooks/uploadImage";
 import Actions from "./components/Actions";
 import QuranVerse from "./components/QuranVerse";
 import Tags from "./components/Tags";
-import uploadImage from "../../hooks/uploadImage";
-import { Photo } from "@mui/icons-material";
 
 const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
   const [mode, setMode] = useState("new");
+  const [photoMode, setPhotoMode] = useState("main");
   const [newTag, setNewTag] = useState("");
 
   const { openFilePicker, filesContent, loading } = useFilePicker({
-    accept: ".jpg, .jpeg, .png, .gif",
+    readAs: "DataURL",
+    accept: "image/*",
+    multiple: false,
   });
-  console.log("📢[index.jsx:23]: loading: ", loading);
 
   useEffect(() => {
     async function saveImage() {
-      await uploadImage(filesContent[0]);
+      await uploadImage(
+        filesContent[0],
+        photoMode === "main" ? handleSaveMainImage : handleSavePhoto
+      );
     }
 
     if (!loading && filesContent && filesContent.length > 0) {
       saveImage();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filesContent, loading]);
 
-  const handleDelete = (tagToDelete) => {
+  const handleSaveMainImage = async (downloadUrl) => {
+    setNewCapsule({
+      ...newCapsule,
+      image: downloadUrl,
+    });
+  };
+
+  const handleSavePhoto = async (downloadUrl) => {
+    setNewCapsule({
+      ...newCapsule,
+      photos: [
+        ...newCapsule.photos,
+        {
+          image: downloadUrl,
+          title: "",
+        },
+      ],
+    });
+  };
+
+  const handleAddPhoto = () => {
+    setPhotoMode("photo");
+    openFilePicker();
+  };
+
+  const handleDeleteTag = (tagToDelete) => {
     setNewCapsule({
       ...newCapsule,
       tags: newCapsule.tags.filter((tag) => tag !== tagToDelete),
@@ -78,7 +109,10 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                 />
                 <Box sx={{ height: "100%" }}>
                   <Button
-                    onClick={() => openFilePicker()}
+                    onClick={() => {
+                      setPhotoMode("main");
+                      openFilePicker();
+                    }}
                     startIcon={<Photo />}
                   >
                     Image
@@ -119,7 +153,10 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                     spacing={1}
                     sx={{ width: "50%" }}
                   >
-                    <Tags tags={newCapsule.tags} handleDelete={handleDelete} />
+                    <Tags
+                      tags={newCapsule.tags}
+                      handleDelete={handleDeleteTag}
+                    />
                     <TextField
                       label="Add Tag"
                       variant="outlined"
@@ -163,7 +200,20 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                   setNewCapsule={setNewCapsule}
                 />
                 <Stack direction={"row"}>
-                  <Button variant="contained" color="primary">
+                  {newCapsule.photos?.map((photo) => (
+                    <img
+                      key={photo.image}
+                      src={photo.image}
+                      alt={photo.title}
+                      style={{ width: "50px", cursor: "pointer" }}
+                      onClick={() => window.open(photo.image)}
+                    />
+                  ))}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAddPhoto}
+                  >
                     Add Photo
                   </Button>
                 </Stack>

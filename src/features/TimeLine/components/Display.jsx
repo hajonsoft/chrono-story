@@ -1,37 +1,37 @@
-import { Box, Card, Chip, Stack, Typography } from "@mui/material";
-import { getAuth } from "firebase/auth";
-import { doc, getFirestore, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 
-const TimelineDisplay = ({ mode }) => {
+import { auth, firestore } from "@/firebase";
+import { Box, Button, Card, CardActions, CardContent, Chip, Stack, Typography } from "@mui/material";
+import { doc, onSnapshot } from "firebase/firestore";
+
+const TimelineDisplay = ({ mode , onEdit, onDelete}) => {
   const [timeline, setTimeline] = useState([]);
 
   useEffect(() => {
-    const auth = getAuth();
-    const db = getFirestore();
     const userId = auth.currentUser.uid;
-
-    const unsubscribe = onSnapshot(doc(db, "users", userId), (doc) => {
+    const unsubscribe = onSnapshot(doc(firestore, "users", userId), (doc) => {
       const timeLineData = doc.data()?.timeLine || [];
       setTimeline(timeLineData);
     });
 
     return unsubscribe;
-  }, [mode]); // Empty dependency array ensures useEffect runs only once
+  }, [mode]);
 
   return (
     <Box>
       <ul>
         {timeline.map((entry, index) => (
-          <Card key={index} sx={{ padding: "16px", margin: "16px" }}>
+          <Card key={entry.id} sx={{ padding: "16px", margin: "16px" }}>
+            <CardContent>
             <Stack key={index} spacing={2} direction={"row"}>
               <Typography variant="h5" sx={{ width: "8%" }}>
                 {entry.year}
               </Typography>
               <img
-                style={{ width: "100px", height: "100px" }}
-                src={entry.image || "https://source.unsplash.com/random"}
+                style={{ width: "100px", height: "100px", cursor: "pointer"}}
+                src={entry.image || "https://via.placeholder.com/200x200?text=No+Image&bg=CCCCCC&fg=000000"}
                 alt={entry.title}
+                onClick={() => window.open(entry.image)}
               />
               <Stack direction={"column"} sx={{ width: "100%" }}>
                 <Stack direction={"row"} spacing={1} alignItems={"center"}>
@@ -47,23 +47,33 @@ const TimelineDisplay = ({ mode }) => {
                 </Typography>
                 {entry.verses?.map((verse, index) => (
                   <Typography key={index} variant="body2" align="right">
-                    {verse}
+                    {verse.text}
                   </Typography>
                 ))}
-                <ul>
-                  {entry.photos?.map((photo, index) => (
-                    <li key={index}>
-                      <img
-                        src={photo.image}
-                        alt={photo.title}
-                        style={{ width: "50px" }}
-                      />
-                      <p>{photo.title}</p>
-                    </li>
+                <Stack direction={"row"} spacing={1}>
+                  {entry.photos?.map((photo) => (
+                    <img
+                      key={photo.image}
+                      src={photo.image}
+                      alt={photo.title}
+                      style={{ width: "50px", cursor: "pointer"}}
+                      onClick={() => window.open(photo.image)}
+                    />
                   ))}
-                </ul>
+                </Stack>
               </Stack>
             </Stack>
+            </CardContent>
+            <CardActions>
+              <Stack direction={"row"} spacing={1}>
+                <Button variant="contained" color="primary" onClick={() => onEdit(entry)}>
+                  Edit
+                </Button>
+                <Button variant="contained" color="secondary" onClick={() => onDelete(entry)}>
+                  Delete
+                </Button>
+              </Stack>
+            </CardActions>
           </Card>
         ))}
       </ul>

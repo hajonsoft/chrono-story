@@ -1,18 +1,11 @@
-import { doc, runTransaction, getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { auth, firestore } from "@/firebase";
+import { doc, runTransaction } from "firebase/firestore";
 
-const addEntryToTimeline = async (newEntry) => {
+const saveNewEntry = async (newEntry) => {
   try {
-    const auth = getAuth();
-    const firestore = getFirestore();
 
-    // Get the current user's UID
     const userId = auth.currentUser.uid;
-
-    // Reference to the document containing the timeline array
     const userDocRef = doc(firestore, `users/${userId}`);
-
-    // Run a transaction to ensure atomicity
     await runTransaction(firestore, async (transaction) => {
       // Fetch the document data within the transaction
       const userDocSnapshot = await transaction.get(userDocRef);
@@ -41,4 +34,4 @@ const addEntryToTimeline = async (newEntry) => {
   }
 };
 
-export default addEntryToTimeline;
+export default saveNewEntry;

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Box, Button, TextField } from "@mui/material";
 import Tags from "./Tags";
 
-const QuranVerse = ({newCapsule , setNewCapsule}) => {
+const QuranVerse = ({ newCapsule, setNewCapsule }) => {
   const [reference, setReference] = useState("");
 
   const handleAddVerse = async () => {
@@ -19,7 +19,14 @@ const QuranVerse = ({newCapsule , setNewCapsule}) => {
 
       setNewCapsule({
         ...newCapsule,
-        verses: [...newCapsule.verses, verseText],
+        verses: [
+          ...newCapsule.verses,
+          {
+            text: verseText,
+            reference: reference,
+            comments: [""],
+          },
+        ],
       });
     } catch (error) {
       console.error("Error fetching verse:", error);
@@ -28,13 +35,13 @@ const QuranVerse = ({newCapsule , setNewCapsule}) => {
 
   const handleDeleteVerse = (verseToDelete) => {
     setNewCapsule({
-        ...newCapsule,
-        verses: newCapsule.verses.filter((verse) => verse !== verseToDelete),
-        });
+      ...newCapsule,
+      verses: newCapsule.verses?.filter((verse) => verse.reference !== verseToDelete.reference),
+    });
   };
 
   return (
-    <Box sx={{width: '100%'}} display={"flex"} justifyContent={"flex-end"}>
+    <Box sx={{ width: "100%" }} display={"flex"} justifyContent={"flex-end"}>
       <TextField
         label="surah:ayah"
         variant="outlined"
@@ -50,7 +57,11 @@ const QuranVerse = ({newCapsule , setNewCapsule}) => {
         Add
       </Button>
 
-      <Tags tags={newCapsule.verses} handleDelete={handleDeleteVerse} />
+      <Tags
+        tags={newCapsule.verses}
+        handleDelete={handleDeleteVerse}
+        getTagText={(verse) => verse.text}
+      />
     </Box>
   );
 };

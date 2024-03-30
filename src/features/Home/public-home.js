@@ -1,27 +1,17 @@
 // import { getAnalytics } from "firebase/analytics";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-import { initializeApp } from "firebase/app";
-import { GoogleAuthProvider, getAuth, signInWithPopup, onAuthStateChanged } from "firebase/auth"; // Import Firebase authentication modules
-import Welcome from "./Welcome";
+import {
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "@/firebase";
+import Home from "./home";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDOdTR0_d_VM1yVe_9g0Kc1Cer5ka8K46k",
-  authDomain: "chrono-story.firebaseapp.com",
-  projectId: "chrono-story",
-  storageBucket: "chrono-story.appspot.com",
-  messagingSenderId: "169058871382",
-  appId: "1:169058871382:web:16653261123826e59833f7",
-  measurementId: "G-PZ0KJ73475",
-};
-
-const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-
-const auth = getAuth(app); // Initialize Firebase authentication service
 const googleAuthProvider = new GoogleAuthProvider(); // Create Google authentication provider
 
-const Home = () => {
+const PublicHome = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -68,12 +58,8 @@ const Home = () => {
   };
 
   return (
-    <Welcome
-      handleLogin={handleLogin}
-      handleSignUp={handleSignUp}
-      user={user}
-    />
+    <Home handleLogin={handleLogin} handleSignUp={handleSignUp} user={user} />
   );
 };
 
-export default Home;
+export default PublicHome;

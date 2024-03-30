@@ -5,33 +5,11 @@ import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 
 const Actions = ({ mode, setMode }) => {
-  const entry = {
-    title: "",
-    description: "",
-    year: "",
-    image: "",
-    photos: [],
-  };
-  const handleAddEntry = () => {
-    setMode("add");
-  };
-
-  const handleSaveEntry = () => {
-    // save entry to firestore
-    console.log("Saving entry: ", entry);
-    setMode("save");
-  };
-
-  const handleCancelEntry = () => {
-    // save entry to firestore
-    setMode("default");
-  };
-
   return (
     <Stack direction={"row"} justifyContent={"flex-end"} alignItems={"center"}>
       {(mode === "default" || mode === "save") && (
         <Button
-          onClick={handleAddEntry}
+          onClick={() => setMode("add")}
           color="primary"
           variant="contained"
           startIcon={<Add />}
@@ -39,26 +17,38 @@ const Actions = ({ mode, setMode }) => {
           New capsule
         </Button>
       )}
-      {mode === "add" && (
-        <Stack direction={"row"} spacing={1}>
+      <Stack direction={"row"} spacing={1}>
+        {(mode === "add" || mode === "edit") && (
           <Button
             variant="outlined"
             color="secondary"
-            onClick={handleCancelEntry}
+            onClick={() => setMode("default")}
             startIcon={<Cancel />}
           >
             Cancel
           </Button>
+        )}
+        {mode === "add" && (
           <Button
             variant="contained"
             color="primary"
-            onClick={handleSaveEntry}
+            onClick={() => setMode("save")}
             startIcon={<Save />}
           >
             Save Capsule
           </Button>
-        </Stack>
-      )}
+        )}
+        {mode === "edit" && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setMode("update")}
+            startIcon={<Save />}
+          >
+            Update Capsule
+          </Button>
+        )}
+      </Stack>
     </Stack>
   );
 };

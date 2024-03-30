@@ -1,12 +1,13 @@
+import React from "react";
+
 import { Avatar, Box, Stack } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import React from "react";
 import TimeLine from "../TimeLine";
 
-const Welcome = ({ user, handleLogin, handleSignUp }) => {
+const Home = ({ user, handleLogin, handleSignUp }) => {
   return (
     <div>
       <AppBar position="static">
@@ -29,7 +30,6 @@ const Welcome = ({ user, handleLogin, handleSignUp }) => {
                 Login
               </Button>
               <Button
-                variant="contained"
                 color="secondary"
                 onClick={handleSignUp}
               >
@@ -68,4 +68,4 @@ const Welcome = ({ user, handleLogin, handleSignUp }) => {
   );
 };
 
-export default Welcome;
+export default Home;
