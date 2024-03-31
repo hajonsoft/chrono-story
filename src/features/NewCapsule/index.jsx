@@ -13,11 +13,11 @@ import { Box } from "@mui/system";
 import { useFilePicker } from "use-file-picker";
 import uploadImage from "../../hooks/uploadImage";
 import Actions from "./components/Actions";
-import QuranVerse from "./components/QuranVerse";
+import QuranVerse from "./components/QuranVerses";
 import Tags from "./components/Tags";
 
 const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
-  const [mode, setMode] = useState("new");
+  const [localeMode, setLocaleMode] = useState("edit");
   const [photoMode, setPhotoMode] = useState("main");
   const [newTag, setNewTag] = useState("");
 
@@ -83,8 +83,8 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
   };
 
   const handleSetMode = (mode) => {
-    setMode(mode);
-    setParentMode("save");
+    setLocaleMode(mode);
+    setParentMode(mode);
   };
 
   return (
@@ -218,7 +218,7 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
           </Box>
         </Stack>
         <CardActions>
-          <Actions mode={mode} setMode={handleSetMode} />
+          <Actions mode={localeMode} setMode={handleSetMode} />
         </CardActions>
       </CardContent>
     </Card>

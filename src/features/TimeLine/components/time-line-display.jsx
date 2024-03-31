@@ -26,6 +26,10 @@ const TimelineDisplay = ({
     return unsubscribe;
   }, [mode]);
 
+  const handleOnSetMode = (mode) => {
+    setMode(mode);
+  }
+
   return (
     <Box>
       {timeline.map((entry) => (
@@ -35,7 +39,7 @@ const TimelineDisplay = ({
           )}
           {mode === "edit" && entry.id === newCapsule.id && (
             <Box sx={{ mb: 2, border: '2px dotted purple' }}>
-            <NewCapsule newCapsule={newCapsule} setNewCapsule={setNewCapsule} setMode={setMode} />
+            <NewCapsule newCapsule={newCapsule} setNewCapsule={setNewCapsule} setParentMode={handleOnSetMode} />
             </Box>
           )}
         </Box>

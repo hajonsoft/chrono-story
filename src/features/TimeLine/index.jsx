@@ -72,7 +72,7 @@ const TimeLine = () => {
         onDelete={handleDeleteCapsule}
         newCapsule={activeCapsule}
         setNewCapsule={setActiveCapsule}
-        setMode={setMode}
+        setMode={handleSetMode}
       />
     </Paper>
   );

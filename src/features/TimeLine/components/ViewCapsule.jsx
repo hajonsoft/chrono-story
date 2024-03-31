@@ -8,6 +8,7 @@ import {
   Chip,
   Stack,
   Typography,
+  Box,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -42,11 +43,23 @@ const ViewCapsule = ({ entry, onEdit, onDelete }) => {
             <Typography variant="body1" align="left">
               {entry.description}
             </Typography>
-            {entry.verses?.map((verse, index) => (
-              <Typography key={index} variant="body2" align="right">
-                {verse.text}
-              </Typography>
-            ))}
+            {entry.verses
+              ?.sort((a, b) => a.order - b.order)
+              .map((verse, index) => (
+                <Box>
+                  <Typography key={index} variant="body2" align="right">
+                    {verse.text}
+                  </Typography>
+                  <Typography
+                    key={index}
+                    variant="body2"
+                    align="right"
+                    color={"textSecondary"}
+                  >
+                    {verse.comment}
+                  </Typography>
+                </Box>
+              ))}
             <Stack direction={"row"} spacing={1}>
               {entry.photos?.map((photo) => (
                 <img
