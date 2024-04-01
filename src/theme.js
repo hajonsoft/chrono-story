@@ -1,13 +1,12 @@
 import { createTheme } from "@mui/material";
-import { lightGreen, deepPurple } from '@mui/material/colors';
 
 export const theme = createTheme({
   palette: {
     primary: {
-      main: lightGreen[500]
+      main: "#D0000E",
     },
     secondary: {
-      main: deepPurple[500]
-    }
+      main: "#00796B",
+    },
   },
 });

@@ -1,12 +1,12 @@
 // import { getAnalytics } from "firebase/analytics";
 import React, { useEffect, useState } from "react";
 
+import { auth } from "@/firebase";
 import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
 } from "firebase/auth";
-import { auth } from "@/firebase";
 import Home from "./home";
 
 const googleAuthProvider = new GoogleAuthProvider(); // Create Google authentication provider

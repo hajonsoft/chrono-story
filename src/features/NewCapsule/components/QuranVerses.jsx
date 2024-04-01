@@ -25,6 +25,7 @@ const QuranVerse = ({ newCapsule, setNewCapsule }) => {
 
       // Extract the verse text from the response
       const verseText = data.data.text;
+      const name = data.data.surah.name;
 
       setNewCapsule({
         ...newCapsule,
@@ -34,6 +35,7 @@ const QuranVerse = ({ newCapsule, setNewCapsule }) => {
             text: verseText,
             reference: reference,
             comments: [""],
+            name
           },
         ],
       });
@@ -75,7 +77,7 @@ const QuranVerse = ({ newCapsule, setNewCapsule }) => {
       <Box sx={{padding: '32px'}}>
         {newCapsule.verses?.map((verse, index) => (
           <Card key={index} sx={{ marginTop: 2 }}>
-            <CardHeader title={verse.reference} subheader={verse.text} />
+            <CardHeader title={`${verse.reference} ${verse.name}`} subheader={verse.text} />
             <CardContent>
               <Stack direction={"row"} spacing={1}>
                 <TextField
