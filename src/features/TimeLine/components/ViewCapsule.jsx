@@ -44,20 +44,52 @@ const ViewCapsule = ({ entry, onEdit, onDelete }) => {
               {entry.description}
             </Typography>
             {entry.verses
-              ?.sort((a, b) => a.order - b.order)
+              ?.sort((a, b) => {
+                if (!a.order) return 1;
+                if (!b.order) return -1;
+                return a.order - b.order;
+              })
               .map((verse, index) => (
-                <Box>
-                  <Typography key={index} variant="body2" align="right">
-                    {verse.text}
-                  </Typography>
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    align="right"
-                    color={"textSecondary"}
+                <Box
+                  key={verse.text}
+                  sx={{ border: "1px solid red", marginBottom: "8px", padding: '4px', borderRadius: '8px' }}
+                >
+                  <Box
+                    sx={{
+                      display: "flex",
+                      width: "100%",
+                    }}
                   >
-                    {verse.comment}
-                  </Typography>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Typography key={index} variant="body2" align="right">
+                        {verse.text}
+                      </Typography>
+                      <Typography
+                        key={index}
+                        variant="body2"
+                        align="right"
+                        color={"textSecondary"}
+                      >
+                        {verse.comment}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ width: "32px", display: 'flex', justifyContent: 'flex-end', marginLeft: '8px' }}>
+                      <Box
+                        sx={{
+                          borderRadius: "100%",
+                          backgroundColor: "teal",
+                          color: "white",
+                          width: "24px",
+                          height: "24px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {verse.order}
+                      </Box>
+                    </Box>
+                  </Box>
                 </Box>
               ))}
             <Stack direction={"row"} spacing={1}>
