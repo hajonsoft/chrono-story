@@ -12,7 +12,7 @@ const Home = ({ user, handleLogin, handleSignUp }) => {
       <AppBar position="static" sx={{backgroundColor: '#FDFFEF', color: '#D0000E'}}>
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            TimeVerse
+            Time Verse
           </Typography>
           {user ? (
             <Stack direction={"row"} alignItems={"center"}>
@@ -36,13 +36,15 @@ const Home = ({ user, handleLogin, handleSignUp }) => {
         </Toolbar>
       </AppBar>
       {!user && <Information />}
+      {/* TODO: Replace Welcome back with the timeLine when the user is logged in and there is a timeLine */}
+      {/* Create one free time line per login for more timelines per login, payment is required */}
       {user && (
         <Box sx={{ marginTop: "16px" }}>
           <Typography variant="h5">
             Welcome back, {user.displayName || user.email}!
           </Typography>
           <p>
-            You are now logged in to TimeVerse. You can start creating your own
+            You are now logged in to Time Verse. You can start creating your own
             timelines or view existing ones.
           </p>
 

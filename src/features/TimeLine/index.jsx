@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-import saveNewEntry from "../../hooks/saveNewEntry";
+import { Box } from "@mui/material";
+import deleteEntry from "../../hooks/deleteEntry";
 import saveExistingEntry from "../../hooks/saveExistingEntry";
+import saveNewEntry from "../../hooks/saveNewEntry";
 import NewCapsule from "../NewCapsule";
 import Actions from "./components/Actions";
 import TimelineDisplay from "./components/time-line-display";
-import { Paper } from "@mui/material";
-import deleteEntry from "../../hooks/deleteEntry";
 
 const TimeLine = () => {
   const [mode, setMode] = useState("default");
@@ -50,7 +50,7 @@ const TimeLine = () => {
   };
 
   return (
-    <Paper
+    <Box
       elevation={10}
       sx={{
         margin: "0 32px",
@@ -66,15 +66,17 @@ const TimeLine = () => {
           setParentMode={setMode}
         />
       )}
-      <TimelineDisplay
-        mode={mode}
-        onEdit={handleEditCapsule}
-        onDelete={handleDeleteCapsule}
-        newCapsule={activeCapsule}
-        setNewCapsule={setActiveCapsule}
-        setMode={handleSetMode}
-      />
-    </Paper>
+      <Box sx={{border: '1px solid teal', borderRadius: '16px', boxShadow: '8px 4px 8px teal'}}>
+        <TimelineDisplay
+          mode={mode}
+          onEdit={handleEditCapsule}
+          onDelete={handleDeleteCapsule}
+          newCapsule={activeCapsule}
+          setNewCapsule={setActiveCapsule}
+          setMode={handleSetMode}
+        />
+      </Box>
+    </Box>
   );
 };
 

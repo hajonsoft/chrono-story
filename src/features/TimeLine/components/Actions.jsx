@@ -4,6 +4,7 @@ import { Add, Cancel, Save } from "@mui/icons-material";
 import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
 
+// TODO: Style this actions component better and make it outside the paper
 const Actions = ({ mode, setMode }) => {
   return (
     <Stack direction={"row"} justifyContent={"flex-end"} alignItems={"center"} mb={2}>

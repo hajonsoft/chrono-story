@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import FormatAlignJustifyIcon from "@mui/icons-material/FormatAlignJustify";
+import { LibraryBooks } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -8,10 +8,12 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  IconButton,
   Stack,
   TextField
 } from "@mui/material";
 
+// TODO: Make the quran verse into maximum height, so that it can be scrolled, allow drag and drop to reorder the verses here and in the display component
 const QuranVerse = ({ newCapsule, setNewCapsule }) => {
   const [reference, setReference] = useState("");
 
@@ -39,6 +41,7 @@ const QuranVerse = ({ newCapsule, setNewCapsule }) => {
           },
         ],
       });
+      setReference("");
     } catch (error) {
       console.error("Error fetching verse:", error);
     }
@@ -55,26 +58,18 @@ const QuranVerse = ({ newCapsule, setNewCapsule }) => {
 
   return (
     <Stack sx={{ width: "100%" }} display={"flex"} justifyContent={"flex-end"}>
-      <Stack direction={"row"} spacing={2} sx={{ width: "100%" }}>
+      <Stack direction={"row-reverse"} spacing={2} sx={{ width: "100%" }}>
         <TextField
           label="surah:ayah"
           variant="outlined"
           value={reference}
           onChange={(e) => setReference(e.target.value)}
-          style={{ marginRight: "10px" }}
+          InputProps={{
+            endAdornment: <IconButton onClick={handleAddVerse}><LibraryBooks /></IconButton>,
+          }}
         />
-        <Button
-          variant="outlined"
-          color="secondary"
-          onClick={handleAddVerse}
-          style={{ marginBottom: "10px" }}
-          startIcon={<FormatAlignJustifyIcon />}
-          size="small"
-        >
-          Add
-        </Button>
       </Stack>
-      <Box sx={{padding: '32px'}}>
+      <Box sx={{padding: '8px'}}>
         {newCapsule.verses?.map((verse, index) => (
           <Card key={index} sx={{ marginTop: 2 }}>
             <CardHeader title={`${verse.reference} ${verse.name}`} subheader={verse.text} />
@@ -120,6 +115,7 @@ const QuranVerse = ({ newCapsule, setNewCapsule }) => {
                   label="Comment"
                   variant="outlined"
                   sx={{ mt: 1 }}
+                  multiline
                 />
               </Stack>
             </CardContent>

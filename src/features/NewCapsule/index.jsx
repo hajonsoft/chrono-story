@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Photo } from "@mui/icons-material";
+import { Add, Photo } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -82,6 +82,21 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
     }
   };
 
+  const handleTagOnChange = (e) => {
+    // get tag value and when a comma is entered, add the tag to the list
+    const tagText = e.target.value;
+    if (tagText.includes(",")) {
+      setNewCapsule({
+        ...newCapsule,
+        tags: [...newCapsule.tags, tagText.replace(",", "")],
+      });
+      setNewTag("");
+      return;
+    }
+
+    setNewTag(e.target.value);
+  };
+
   const handleSetMode = (mode) => {
     setLocaleMode(mode);
     setParentMode(mode);
@@ -135,8 +150,8 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
             <Stack spacing={1}>
               <Stack direction={"row"} alignItems={"center"}>
                 <TextField
-                  label="Title"
-                  placeholder="Capsule title"
+                  label="Topic"
+                  placeholder="Capsule topic"
                   value={newCapsule.title}
                   fullWidth
                   onChange={(e) =>
@@ -157,7 +172,7 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                     label="Add Tag"
                     variant="outlined"
                     value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
+                    onChange={handleTagOnChange}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
                         handleAddTag();
@@ -173,7 +188,7 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                             cursor: "pointer",
                           }}
                         >
-                          Add
+                          <Add color="secondary" />
                         </button>
                       ),
                     }}
@@ -181,7 +196,8 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                 </Stack>
               </Stack>
               <TextField
-                label="Description"
+                label="Topic details"
+                multiline
                 fullWidth
                 value={newCapsule.description}
                 onChange={(e) =>
