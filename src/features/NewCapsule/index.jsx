@@ -6,6 +6,7 @@ import {
   Card,
   CardActions,
   CardContent,
+  IconButton,
   Stack,
   TextField,
 } from "@mui/material";
@@ -211,24 +212,19 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
                 newCapsule={newCapsule}
                 setNewCapsule={setNewCapsule}
               />
-              <Stack direction={"row"}>
+              <Stack direction={"row"} alignItems={"center"} spacing={1}>
                 {newCapsule.photos?.map((photo) => (
                   <img
                     key={photo.image}
                     src={photo.image}
                     alt={photo.title}
-                    style={{ width: "50px", cursor: "pointer" }}
+                    style={{ width: "50px", height: "50px", cursor: "pointer" }}
                     onClick={() => window.open(photo.image)}
                   />
                 ))}
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={handleAddPhoto}
-                  startIcon={<Photo />}
-                >
-                  Add Photo
-                </Button>
+                <IconButton variant="outlined" onClick={handleAddPhoto}>
+                  <Add color="primary" />
+                </IconButton>
               </Stack>
             </Stack>
           </Box>

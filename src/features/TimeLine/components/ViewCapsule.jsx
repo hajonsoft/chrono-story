@@ -51,7 +51,7 @@ const ViewCapsule = ({ entry, onEdit, onDelete }) => {
               })
               .map((verse, index) => (
                 <Box
-                  key={verse.text}
+                  key={`verse.reference-${index}`}
                   sx={{ border: "1px solid red", marginBottom: "8px", padding: '4px', borderRadius: '8px' }}
                 >
                   <Box
