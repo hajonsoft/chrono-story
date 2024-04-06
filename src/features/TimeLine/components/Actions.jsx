@@ -7,16 +7,31 @@ import Button from "@mui/material/Button";
 // TODO: Style this actions component better and make it outside the paper
 const Actions = ({ mode, setMode }) => {
   return (
-    <Stack direction={"row"} justifyContent={"flex-end"} alignItems={"center"} mb={2}>
+    <Stack
+      direction={"row"}
+      justifyContent={"flex-end"}
+      alignItems={"center"}
+      mb={2}
+    >
       {(mode === "default" || mode === "save") && (
-        <Button
-          onClick={() => setMode("add")}
-          color="primary"
-          variant="contained"
-          startIcon={<Add />}
-        >
-          New capsule
-        </Button>
+        <Stack direction={"row"} spacing={2}>
+          <Button
+            onClick={() => setMode("add")}
+            color="secondary"
+            variant="contained"
+            startIcon={<Add />}
+          >
+            New Time Line
+          </Button>
+          <Button
+            onClick={() => setMode("add")}
+            color="primary"
+            variant="contained"
+            startIcon={<Add />}
+          >
+            New capsule
+          </Button>
+        </Stack>
       )}
       <Stack direction={"row"} spacing={1}>
         {(mode === "add" || mode === "edit") && (
