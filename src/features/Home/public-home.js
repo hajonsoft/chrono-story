@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
+  signOut,
 } from "firebase/auth";
 import TimeLine from "../TimeLine";
 import Welcome from "./welcome";
@@ -49,7 +50,14 @@ const PublicHome = () => {
   };
 
   const handleSignOut = () => {
-    setUser(undefined);
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        setUser(null); // Assuming setUser is a state setter function
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error);
+      });
   };
 
   return (
