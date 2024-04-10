@@ -1,0 +1,26 @@
+[debug] [2024-04-10T22:51:45.189Z] ----------------------------------------------------------------------
+[debug] [2024-04-10T22:51:45.190Z] Command:       /Users/aali/.nvm/versions/node/v18.18.2/bin/node /Users/aali/.nvm/versions/node/v18.18.2/bin/firebase deploy --only hosting
+[debug] [2024-04-10T22:51:45.190Z] CLI Version:   13.6.1
+[debug] [2024-04-10T22:51:45.190Z] Platform:      darwin
+[debug] [2024-04-10T22:51:45.190Z] Node Version:  v18.18.2
+[debug] [2024-04-10T22:51:45.191Z] Time:          Wed Apr 10 2024 15:51:45 GMT-0700 (Pacific Daylight Time)
+[debug] [2024-04-10T22:51:45.191Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-04-10T22:51:45.226Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-04-10T22:51:45.226Z] > authorizing via signed-in user (ayman@fanfix.io)
+[debug] [2024-04-10T22:51:45.226Z] [iam] checking project chrono-story for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2024-04-10T22:51:45.227Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/chrono-story:testIamPermissions [none]
+[debug] [2024-04-10T22:51:45.227Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/chrono-story:testIamPermissions x-goog-quota-user=projects/chrono-story
+[debug] [2024-04-10T22:51:45.228Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/chrono-story:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-04-10T22:51:46.093Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/chrono-story:testIamPermissions 200
+[debug] [2024-04-10T22:51:46.094Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/chrono-story:testIamPermissions {}
+[debug] [2024-04-10T22:51:46.094Z] [iam] error while checking permissions, command may fail: FirebaseError: Authorization failed. This account is missing the following required permissions on project chrono-story:
+
+  firebase.projects.get
+  firebasehosting.sites.update
+[debug] [2024-04-10T22:51:46.095Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/chrono-story [none]
+[debug] [2024-04-10T22:51:46.430Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/chrono-story 403
+[debug] [2024-04-10T22:51:46.431Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/chrono-story {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2024-04-10T22:51:46.431Z] HTTP Error: 403, The caller does not have permission
+[error] 
+[error] Error: Assertion failed: resolving hosting target of a site with no site name or target name. This should have caused an error earlier

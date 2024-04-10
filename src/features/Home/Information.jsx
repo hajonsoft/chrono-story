@@ -295,6 +295,7 @@ const Information = ({ onGetStarted }) => {
               <TextField
                 label="Email"
                 sx={{ backgroundColor: "#fff" }}
+                value={email}
                 onChange={setEmail}
               />
               <Button
