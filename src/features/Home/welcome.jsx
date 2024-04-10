@@ -1,8 +1,9 @@
-import { Button } from "@mui/material";
+import React from "react";
+
+import { Button, Link } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import React from "react";
 import Information from "./Information";
 
 const Welcome = ({ handleLogin, handleSignUp }) => {
@@ -14,20 +15,20 @@ const Welcome = ({ handleLogin, handleSignUp }) => {
       >
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Time Verse
+            Quranic verse study website
           </Typography>
 
           <div>
-            <Button variant="contained" color="primary" onClick={handleLogin}>
+            <Link variant="body2" color="primary" component={"button"} onClick={handleLogin}>
               Login
-            </Button>
+            </Link>
             <Button color="secondary" onClick={handleSignUp}>
               Sign Up
             </Button>
           </div>
         </Toolbar>
       </AppBar>
-      <Information />
+      <Information onGetStarted={handleSignUp}/>
     </div>
   );
 };
