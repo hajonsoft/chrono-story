@@ -1,20 +1,51 @@
 import React from "react";
 
+import formatYear from "@/helpers/formatYear";
+import { deleteCapsule, setActiveCapsule } from "@/redux/globalSlice";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import {
+  Box,
   Button,
   Card,
   CardActions,
   CardContent,
   Chip,
+  CircularProgress,
   Stack,
   Typography,
-  Box,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import formatYear from "@/helpers/formatYear";
+import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { setMode } from "../../../redux/globalSlice";
 
-const ViewCapsule = ({ entry, onEdit, onDelete }) => {
+const ViewCapsule = ({ entry }) => {
+  const [loading, setLoading] = React.useState(false);
+  const { id } = useParams();
+
+  const dispatch = useDispatch();
+
+  const handleDeleteCapsule = () => {
+    setLoading(true);
+    dispatch(
+      deleteCapsule({
+        timelineId: id,
+        capsuleId: entry.id,
+      })
+    )
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(() => {
+        console.error("Failed to delete capsule");
+      });
+  };
+
+  const handleEditCapsule = () => {
+    dispatch(setActiveCapsule(entry));
+    dispatch(setMode("edit-capsule"));
+  };
+
   return (
     <Card key={entry.id} sx={{ padding: "16px", margin: "16px" }}>
       <CardContent>
@@ -52,7 +83,12 @@ const ViewCapsule = ({ entry, onEdit, onDelete }) => {
               .map((verse, index) => (
                 <Box
                   key={`verse.reference-${index}`}
-                  sx={{ border: "1px solid red", marginBottom: "8px", padding: '4px', borderRadius: '8px' }}
+                  sx={{
+                    border: "1px solid red",
+                    marginBottom: "8px",
+                    padding: "4px",
+                    borderRadius: "8px",
+                  }}
                 >
                   <Box
                     sx={{
@@ -73,7 +109,14 @@ const ViewCapsule = ({ entry, onEdit, onDelete }) => {
                         {verse.comment}
                       </Typography>
                     </Box>
-                    <Box sx={{ width: "32px", display: 'flex', justifyContent: 'flex-end', marginLeft: '8px' }}>
+                    <Box
+                      sx={{
+                        width: "32px",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        marginLeft: "8px",
+                      }}
+                    >
                       <Box
                         sx={{
                           borderRadius: "100%",
@@ -111,16 +154,28 @@ const ViewCapsule = ({ entry, onEdit, onDelete }) => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => onEdit(entry)}
-            startIcon={<EditIcon />}
+            onClick={handleEditCapsule}
+            startIcon={
+              loading ? (
+                <CircularProgress sx={{ color: "#fff" }} />
+              ) : (
+                <EditIcon />
+              )
+            }
           >
             Edit
           </Button>
           <Button
             variant="outlined"
             color="secondary"
-            onClick={() => onDelete(entry)}
-            startIcon={<DeleteIcon />}
+            onClick={handleDeleteCapsule}
+            startIcon={
+              loading ? (
+                <CircularProgress sx={{ color: "#fff" }} />
+              ) : (
+                <DeleteIcon />
+              )
+            }
           >
             Delete
           </Button>

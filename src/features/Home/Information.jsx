@@ -7,7 +7,6 @@ import {
   Grid,
   Link,
   Paper,
-  Stack,
   TextField,
   Typography,
 } from "@mui/material";
@@ -64,11 +63,8 @@ const projects = [
     link: "#",
   },
 ];
-const Information = ({ onGetStarted }) => {
+const Information = () => {
   const [email, setEmail] = React.useState("");
-  const handleGetStarted = () => {
-    onGetStarted && onGetStarted();
-  };
   return (
     <Box sx={{ marginTop: "4px", width: "100%" }}>
       <Box
@@ -130,15 +126,6 @@ const Information = ({ onGetStarted }) => {
             chronological note-editing. Be inspired as you explore the
             connection between Quranic stories and ancient Egyptian history.
           </Typography>
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            sx={{ marginTop: "16px" }}
-          >
-            <Button variant="contained" onClick={handleGetStarted}>
-              Get Started
-            </Button>
-          </Stack>
         </Box>
       </Box>
       <Box
@@ -170,8 +157,7 @@ const Information = ({ onGetStarted }) => {
                   alt={card.title}
                   width={"150px"}
                   height={"150px"}
-                  marginBottom={"16px"}
-                  marginTop={"16px"}
+                  sx={{ marginTop: "16px", marginBottom: "16px" }}
                 />
                 <Typography variant="body1" sx={{ color: "hsl(356,100%,40%)" }}>
                   {card.description}
@@ -296,7 +282,7 @@ const Information = ({ onGetStarted }) => {
                 label="Email"
                 sx={{ backgroundColor: "#fff" }}
                 value={email}
-                onChange={setEmail}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <Button
                 variant="contained"

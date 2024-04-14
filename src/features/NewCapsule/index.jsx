@@ -1,26 +1,36 @@
+import CloseIcon from "@mui/icons-material/Close";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import { Add, Photo } from "@mui/icons-material";
+import { setActiveCapsule } from "@/redux/globalSlice";
+import { Add, Close, Photo } from "@mui/icons-material";
 import {
-  Button,
-  Card,
   CardActions,
-  CardContent,
+  CardMedia,
+  Grid,
   IconButton,
-  Stack,
   TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { useDispatch, useSelector } from "react-redux";
 import { useFilePicker } from "use-file-picker";
 import uploadImage from "../../hooks/uploadImage";
-import Actions from "./components/Actions";
+import { setMode } from "../../redux/globalSlice";
+import Footer from "./components/Footer";
 import QuranVerse from "./components/QuranVerses";
 import Tags from "./components/Tags";
 
-const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
-  const [localeMode, setLocaleMode] = useState("edit");
+const NewCapsule = () => {
+  const globalState = useSelector((state) => state.global);
+  const dispatch = useDispatch();
   const [photoMode, setPhotoMode] = useState("main");
-  const [newTag, setNewTag] = useState("");
 
   const { openFilePicker, filesContent, loading } = useFilePicker({
     readAs: "DataURL",
@@ -43,23 +53,21 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
   }, [filesContent, loading]);
 
   const handleSaveMainImage = async (downloadUrl) => {
-    setNewCapsule({
-      ...newCapsule,
-      image: downloadUrl,
-    });
+    dispatch(
+      setActiveCapsule({ ...globalState.activeCapsule, image: downloadUrl })
+    );
   };
 
   const handleSavePhoto = async (downloadUrl) => {
-    setNewCapsule({
-      ...newCapsule,
-      photos: [
-        ...newCapsule.photos,
-        {
-          image: downloadUrl,
-          title: "",
-        },
-      ],
-    });
+    dispatch(
+      setActiveCapsule({
+        ...globalState.activeCapsule,
+        photos: [
+          ...globalState.activeCapsule.photos,
+          { image: downloadUrl, title: "" },
+        ],
+      })
+    );
   };
 
   const handleAddPhoto = () => {
@@ -67,173 +75,182 @@ const NewCapsule = ({ newCapsule, setNewCapsule, setParentMode }) => {
     openFilePicker();
   };
 
-  const handleDeleteTag = (tagToDelete) => {
-    setNewCapsule({
-      ...newCapsule,
-      tags: newCapsule.tags.filter((tag) => tag !== tagToDelete),
-    });
-  };
-
-  const handleAddTag = () => {
-    if (newTag.trim() !== "") {
-      setNewCapsule({
-        ...newCapsule,
-        tags: [...newCapsule.tags, newTag],
-      });
-    }
-  };
-
-  const handleTagOnChange = (e) => {
-    // get tag value and when a comma is entered, add the tag to the list
-    const tagText = e.target.value;
-    if (tagText.includes(",")) {
-      setNewCapsule({
-        ...newCapsule,
-        tags: [...newCapsule.tags, tagText.replace(",", "")],
-      });
-      setNewTag("");
-      return;
-    }
-
-    setNewTag(e.target.value);
-  };
-
-  const handleSetMode = (mode) => {
-    setLocaleMode(mode);
-    setParentMode(mode);
-  };
-
   return (
-    <Card elevation={6} sx={{ padding: "16px 32px 32px 16px", margin: "16px" }}>
-      <CardContent>
-        <Stack direction={"row"} spacing={1} sx={{ height: "100%" }}>
-          <Box sx={{ width: "13%", height: "100%" }}>
-            <Stack sx={{ height: "100%" }}>
-              <TextField
-                label="Year"
-                type="number"
-                variant="filled"
-                fullWidth
-                value={newCapsule.year}
-                onChange={(e) =>
-                  setNewCapsule({
-                    ...newCapsule,
+    <Dialog
+      open={
+        globalState.mode === "add-capsule" ||
+        globalState.mode === "edit-capsule"
+      }
+      onClose={() => dispatch(setMode("default"))}
+      fullWidth
+      maxWidth="md"
+    >
+      <DialogTitle>
+        {globalState.mode === "add-capsule" ? "New Capsule" : "Edit Capsule"}
+        <IconButton
+          style={{ position: "absolute", right: "8px", top: "8px" }}
+          onClick={() => dispatch(setMode("default"))}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent>
+        <Grid container sx={{ marginBottom: "64px" }}>
+          <Grid
+            item
+            xs={12}
+            md={4}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              height: "60vh",
+              padding: "16px",
+              marginTop: "16px",
+            }}
+          >
+            <TextField
+              type="number"
+              variant="filled"
+              label="Year"
+              fullWidth
+              value={globalState.activeCapsule.year}
+              onChange={(e) =>
+                dispatch(
+                  setActiveCapsule({
+                    ...globalState.activeCapsule,
                     year: e.target.value,
                   })
-                }
-              />
-              <Box sx={{ height: "100%" }}>
-                <Button
-                  onClick={() => {
-                    setPhotoMode("main");
-                    openFilePicker();
+                )
+              }
+            />
+
+            <Box
+              sx={{
+                flexGrow: 1,
+                position: "relative",
+                height: "auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {globalState.activeCapsule.image ? (
+                <>
+                  <CardMedia
+                    component="img"
+                    image={globalState.activeCapsule.image}
+                    alt="Selected"
+                    sx={{
+                      maxWidth: "250px",
+                      maxHeight: "250px",
+                      objectFit: "contain",
+                    }}
+                  />
+                  <CardActions sx={{ position: "absolute", top: 0, right: 0 }}>
+                    <Tooltip title="Remove image">
+                      <IconButton
+                        onClick={() =>
+                          dispatch(
+                            setActiveCapsule({
+                              ...globalState.activeCapsule,
+                              image: null,
+                            })
+                          )
+                        }
+                      >
+                        <Close />
+                      </IconButton>
+                    </Tooltip>
+                  </CardActions>
+                </>
+              ) : (
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "250px",
+                    width: "250px",
+
+                    backgroundColor: "#f5f5f5",
                   }}
-                  startIcon={<Photo />}
                 >
-                  Image
-                </Button>
-              </Box>
-              {/* Display the selected image (optional) */}
-              {newCapsule.image && (
-                <img
-                  src={newCapsule.image}
-                  alt="Selected"
-                  style={{
-                    maxWidth: "100px",
-                    maxHeight: "100px",
-                    marginTop: "10px",
-                  }}
-                />
+                  <Tooltip title="Add image">
+                    <IconButton
+                      onClick={() => {
+                        setPhotoMode("main");
+                        openFilePicker();
+                      }}
+                    >
+                      <Photo />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
               )}
-            </Stack>
-          </Box>
-          <Box sx={{ width: "87%" }}>
-            <Stack spacing={1}>
-              <Stack direction={"row"} alignItems={"center"}>
-                <TextField
-                  label="Topic"
-                  placeholder="Capsule topic"
-                  value={newCapsule.title}
-                  fullWidth
-                  onChange={(e) =>
-                    setNewCapsule({
-                      ...newCapsule,
+            </Box>
+
+            <Tags />
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <Box sx={{ padding: "16px", marginTop: "16px", height: "75vh" }}>
+              <TextField
+                placeholder="Capsule topic"
+                label="Capsule topic"
+                value={globalState.activeCapsule.title}
+                fullWidth
+                onChange={(e) =>
+                  dispatch(
+                    setActiveCapsule({
+                      ...globalState.activeCapsule,
                       title: e.target.value,
                     })
-                  }
-                />
-                <Stack
-                  direction={"row"}
-                  alignItems={"center"}
-                  spacing={1}
-                  sx={{ width: "50%" }}
-                >
-                  <Tags tags={newCapsule.tags} handleDelete={handleDeleteTag} />
-                  <TextField
-                    label="Add Tag"
-                    variant="outlined"
-                    value={newTag}
-                    onChange={handleTagOnChange}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleAddTag();
-                      }
-                    }}
-                    InputProps={{
-                      endAdornment: (
-                        <button
-                          onClick={handleAddTag}
-                          style={{
-                            border: "none",
-                            background: "transparent",
-                            cursor: "pointer",
-                          }}
-                        >
-                          <Add color="secondary" />
-                        </button>
-                      ),
-                    }}
-                  />
-                </Stack>
-              </Stack>
+                  )
+                }
+                sx={{ marginBottom: "16px" }} // Add bottom margin
+              />
+
               <TextField
-                label="Topic details"
+                placeholder="Tell us about the capsule"
+                label="Topic Description"
                 multiline
                 fullWidth
-                value={newCapsule.description}
+                value={globalState.activeCapsule.description}
                 onChange={(e) =>
-                  setNewCapsule({
-                    ...newCapsule,
-                    description: e.target.value,
-                  })
+                  dispatch(
+                    setActiveCapsule({
+                      ...globalState.activeCapsule,
+                      description: e.target.value,
+                    })
+                  )
                 }
+                sx={{ marginBottom: "16px" }} // Add bottom margin
               />
-              <QuranVerse
-                newCapsule={newCapsule}
-                setNewCapsule={setNewCapsule}
-              />
-              <Stack direction={"row"} alignItems={"center"} spacing={1}>
-                {newCapsule.photos?.map((photo) => (
-                  <img
-                    key={photo.image}
-                    src={photo.image}
-                    alt={photo.title}
-                    style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                    onClick={() => window.open(photo.image)}
-                  />
-                ))}
+              <QuranVerse />
+              <Typography variant="h6" sx={{ marginBottom: "16px" }}>
+                Photos
+              </Typography>
+              {globalState.activeCapsule.photos?.map((photo) => (
+                <img
+                  key={photo.image}
+                  src={photo.image}
+                  alt={photo.title}
+                  style={{ width: "50px", height: "50px", cursor: "pointer" }}
+                  onClick={() => window.open(photo.image)}
+                />
+              ))}
+              <Tooltip title="Add photo">
                 <IconButton variant="outlined" onClick={handleAddPhoto}>
                   <Add color="primary" />
                 </IconButton>
-              </Stack>
-            </Stack>
-          </Box>
-        </Stack>
-        <CardActions>
-          <Actions mode={localeMode} setMode={handleSetMode} />
-        </CardActions>
-      </CardContent>
-    </Card>
+              </Tooltip>
+            </Box>
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Footer />
+      </DialogActions>
+    </Dialog>
   );
 };
 

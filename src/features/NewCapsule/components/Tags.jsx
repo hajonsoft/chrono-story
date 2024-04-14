@@ -1,18 +1,64 @@
-import { Chip } from '@mui/material';
-import React from 'react';
+import React, { useState } from "react";
 
-const Tags = ({ tags, handleDelete, getTagText }) => {
+import { Box, Chip, ClickAwayListener, TextField } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveCapsule } from "../../../redux/globalSlice";
+
+const Tags = () => {
+  const [newTag, setNewTag] = useState("");
+  const globalState = useSelector((state) => state.global);
+  const dispatch = useDispatch();
+
+  const handleTagOnChange = (e) => {
+    setNewTag(e.target.value);
+  };
+
+  const handleAddTag = () => {
+    if (newTag.trim() !== "") {
+      dispatch(
+        setActiveCapsule({
+          ...globalState.activeCapsule,
+          tags: [...globalState.activeCapsule.tags, newTag],
+        })
+      );
+      setNewTag("");
+    }
+  };
+
+  const handleDelete = (tagToDelete) => {
+    dispatch(
+      setActiveCapsule({
+        ...globalState.activeCapsule,
+        tags: globalState.activeCapsule.tags.filter(
+          (tag) => tag !== tagToDelete
+        ),
+      })
+    );
+  };
+
   return (
-    <div>
-      {tags?.map((tag, index) => (
+    <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center" }}>
+      {globalState.activeCapsule.tags.map((tag) => (
         <Chip
-          key={index}
-          label={getTagText ? getTagText(tag) : tag}
+          key={`tag-${tag}`}
+          label={tag}
           onDelete={() => handleDelete(tag)}
-          style={{ margin: 5 }}
+          sx={{ margin: "4px" }}
         />
       ))}
-    </div>
+      <ClickAwayListener onClickAway={handleAddTag}>
+        <TextField
+          value={newTag}
+          onChange={handleTagOnChange}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleAddTag();
+            }
+          }}
+          sx={{ margin: "4px" }}
+        />
+      </ClickAwayListener>
+    </Box>
   );
 };
 

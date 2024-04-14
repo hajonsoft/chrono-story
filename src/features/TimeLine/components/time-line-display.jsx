@@ -1,48 +1,44 @@
 import React, { useEffect, useState } from "react";
 
-import { auth, firestore } from "@/firebase";
-import ViewCapsule from "./ViewCapsule";
-import { doc, onSnapshot } from "firebase/firestore";
+import { firestore } from "@/firebase";
 import { Box } from "@mui/system";
-import NewCapsule from "../../NewCapsule";
+import { doc, onSnapshot } from "firebase/firestore";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import ViewCapsule from "./ViewCapsule";
 
-const TimelineDisplay = ({
-  mode,
-  onEdit,
-  onDelete,
-  newCapsule,
-  setNewCapsule,
-  setMode,
-}) => {
+const TimelineDisplay = () => {
   const [timeline, setTimeline] = useState([]);
+  const { id } = useParams();
+  const globalState = useSelector((state) => state.global);
 
   useEffect(() => {
-    const userId = auth.currentUser.uid;
-    const unsubscribe = onSnapshot(doc(firestore, "users", userId), (doc) => {
-      const timeLineData = doc.data()?.timeLine || [];
-      setTimeline(timeLineData.sort((a, b) => a.year - b.year));
-    });
+    const userId = globalState.user?.uid;
+    if (!userId) return;
+
+    const unsubscribe = onSnapshot(
+      doc(firestore, "users", userId, "timelines", id),
+      (snapshot) => {
+        if (snapshot.exists()) {
+          const timelineData = snapshot.data().entries || [];
+          setTimeline(timelineData.sort((a, b) => a.year - b.year));
+        } else {
+          console.log("No such document!");
+        }
+      },
+      (error) => {
+        console.log("Error getting document:", error);
+      }
+    );
 
     return unsubscribe;
-  }, [mode]);
-
-  const handleOnSetMode = (mode) => {
-    setMode(mode);
-  }
+  }, [globalState.user.uid, id]);
 
   return (
     <Box>
+      {timeline.length === 0 && <p>No entries found</p>}
       {timeline.map((entry) => (
-        <Box key={entry.id} sx={{ mb: 2 }}>
-          {(mode !== "edit" || (mode === "edit" && entry.id !== newCapsule.id) )&& (
-            <ViewCapsule entry={entry} onEdit={onEdit} onDelete={onDelete} />
-          )}
-          {mode === "edit" && entry.id === newCapsule.id && (
-            <Box sx={{ mb: 2, border: '2px dotted purple' }}>
-            <NewCapsule newCapsule={newCapsule} setNewCapsule={setNewCapsule} setParentMode={handleOnSetMode} />
-            </Box>
-          )}
-        </Box>
+        <ViewCapsule entry={entry} key={entry.id} />
       ))}
     </Box>
   );
