@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 
 import { fetchVerse, setActiveCapsule } from "@/redux/globalSlice";
-import { LibraryBooks } from "@mui/icons-material";
+import { Delete, LibraryBooks } from "@mui/icons-material";
 import {
   Box,
-  Button,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
   CircularProgress,
@@ -24,6 +22,7 @@ const QuranVerse = () => {
   const dispatch = useDispatch();
 
   const handleAddVerse = async () => {
+    setLoading(true);
     dispatch(fetchVerse(reference)).then(() => {
       setLoading(false);
       setReference("");
@@ -72,7 +71,14 @@ const QuranVerse = () => {
       </Stack>
       <Box sx={{ padding: "8px" }}>
         {globalState.activeCapsule.verses?.map((verse, index) => (
-          <Card key={index} sx={{ marginTop: 2 }}>
+          <Card key={index} sx={{ marginTop: 2, position: "relative" }}>
+            <IconButton
+              onClick={() => handleDeleteVerse(verse)}
+              size="small"
+              style={{ position: "absolute", top: 0, right: 0 }}
+            >
+              <Delete fontSize="small" />
+            </IconButton>
             <CardHeader
               title={`${verse.reference} ${verse.name}`}
               subheader={verse.text}
@@ -92,15 +98,6 @@ const QuranVerse = () => {
                 />
               </Stack>
             </CardContent>
-            <CardActions>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => handleDeleteVerse(verse)}
-              >
-                Delete
-              </Button>
-            </CardActions>
           </Card>
         ))}
       </Box>
