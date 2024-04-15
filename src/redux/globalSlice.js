@@ -236,13 +236,13 @@ export const globalSlice = createSlice({
     extraReducers: (builder) => {
       builder
         .addCase(saveNewCapsule.pending, (state) => {
-          state.status = "loading";
+          state.loading = true;
         })
         .addCase(saveNewCapsule.fulfilled, (state) => {
-          state.status = "idle";
+          state.loading = false;
         })
         .addCase(saveNewCapsule.rejected, (state, action) => {
-          state.status = "failed";
+          state.loading = false;
           state.error = action.error.message;
         })
         .addCase(saveNewTimeLine.pending, (state) => {

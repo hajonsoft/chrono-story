@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { setMode } from "../../../redux/globalSlice";
+import { setMode } from "@/redux/globalSlice";
 
 const ViewCapsule = ({ entry }) => {
   const [loading, setLoading] = React.useState(false);
