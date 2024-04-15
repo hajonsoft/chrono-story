@@ -7,9 +7,11 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-import { setActiveCapsule } from "@/redux/globalSlice";
-import { Add, Close, Photo } from "@mui/icons-material";
+import uploadImage from "@/hooks/uploadImage";
+import { setActiveCapsule, setMode } from "@/redux/globalSlice";
+import { Add, Close, Delete, Photo } from "@mui/icons-material";
 import {
+  Card,
   CardActions,
   CardMedia,
   Grid,
@@ -21,8 +23,6 @@ import {
 import { Box } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
 import { useFilePicker } from "use-file-picker";
-import uploadImage from "../../hooks/uploadImage";
-import { setMode } from "../../redux/globalSlice";
 import Footer from "./components/Footer";
 import QuranVerse from "./components/QuranVerses";
 import Tags from "./components/Tags";
@@ -73,6 +73,17 @@ const NewCapsule = () => {
   const handleAddPhoto = () => {
     setPhotoMode("photo");
     openFilePicker();
+  };
+
+  const handleDeletePhoto = (image) => {
+    dispatch(
+      setActiveCapsule({
+        ...globalState.activeCapsule,
+        photos: globalState.activeCapsule.photos.filter(
+          (photo) => photo.image !== image
+        ),
+      })
+    );
   };
 
   return (
@@ -229,20 +240,40 @@ const NewCapsule = () => {
               <Typography variant="h6" sx={{ marginBottom: "16px" }}>
                 Photos
               </Typography>
-              {globalState.activeCapsule.photos?.map((photo) => (
-                <img
-                  key={photo.image}
-                  src={photo.image}
-                  alt={photo.title}
-                  style={{ width: "50px", height: "50px", cursor: "pointer" }}
-                  onClick={() => window.open(photo.image)}
-                />
-              ))}
-              <Tooltip title="Add photo">
-                <IconButton variant="outlined" onClick={handleAddPhoto}>
-                  <Add color="primary" />
-                </IconButton>
-              </Tooltip>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {globalState.activeCapsule.photos?.map((photo) => (
+                  <Card
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      margin: "10px",
+                    }}
+                  >
+                    <img
+                      key={photo.image}
+                      src={photo.image}
+                      alt={photo.title}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        cursor: "pointer",
+                      }}
+                    />
+                    <IconButton
+                      onClick={() => handleDeletePhoto(photo.image)}
+                      size="small"
+                    >
+                      <Delete size="small" />
+                    </IconButton>
+                  </Card>
+                ))}
+                <Tooltip title="Add photo">
+                  <IconButton variant="outlined" onClick={handleAddPhoto}>
+                    <Add color="primary" />
+                  </IconButton>
+                </Tooltip>
+              </div>
             </Box>
           </Grid>
         </Grid>
