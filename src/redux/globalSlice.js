@@ -167,7 +167,7 @@ export const fetchVerse = createAsyncThunk(
     try {
       // Fetch the verse using the API
       const response = await fetch(
-        `http://api.alquran.cloud/v1/ayah/${reference}`
+        `https://api.alquran.cloud/v1/ayah/${reference}`
       );
       const data = await response.json();
 
