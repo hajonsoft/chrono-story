@@ -1,6 +1,6 @@
 import { auth, firestore } from "@/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { doc, runTransaction, setDoc } from "firebase/firestore";
+import { doc, runTransaction, setDoc, updateDoc } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
 export const saveNewCapsule = createAsyncThunk(
@@ -161,6 +161,36 @@ export const saveNewTimeLine = createAsyncThunk(
   }
 );
 
+export const updateTimeline = createAsyncThunk(
+  "capsules/updateTimeline",
+  async (updateData, { getState, rejectWithValue }) => {
+    try {
+      const { activeTimeline } = getState().global;
+      const userId = auth.currentUser.uid;
+
+      // Get a reference to the existing timeline document
+      const timelineDocRef = doc(
+        firestore,
+        `users/${userId}/timelines/${activeTimeline.key}`
+      );
+
+      // Update the timeline document with the new name and description
+      await updateDoc(timelineDocRef, {
+        name: updateData.name || activeTimeline.name || "Untitled",
+        description:
+          updateData.description ||
+          activeTimeline.description ||
+          "No Description",
+      });
+
+      console.log("Timeline updated successfully");
+    } catch (error) {
+      console.error("Error updating timeline: ", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const fetchVerse = createAsyncThunk(
   "global/fetchVerse",
   async (reference, { getState, dispatch }) => {
@@ -194,6 +224,36 @@ export const fetchVerse = createAsyncThunk(
     }
   }
 );
+
+// export const moveRecords = createAsyncThunk(
+//   "capsules/moveRecords",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       // Get a reference to the source document
+//       const sourceDocRef = doc(firestore, "/users/mQsKRhg3MtgKmcLNTZ3BnfC2OLA2");
+
+//       // Read the source document
+//       const sourceDocSnap = await getDoc(sourceDocRef);
+
+//       // Get the timeLine array from the source document
+//       const sourceArray = sourceDocSnap.data().timeLine;
+
+//       // Log the array
+//       console.log("Source array: ", sourceArray);
+
+//       // Get a reference to the target document
+//       const targetDocRef = doc(firestore, "/users/fw8myGA7buOKBF7FmerFSI6vXV13/timelines/1617f40f-77bf-45ee-bd22-5530630281bf");
+
+//       // Set the entries field of the target document to contain the source array
+//       await setDoc(targetDocRef, { entries: sourceArray });
+
+//       console.log("Records moved successfully");
+//     } catch (error) {
+//       console.error("Error moving records: ", error);
+//       return rejectWithValue(error.message);
+//     }
+//   }
+// );
 
 const initialState = {
   mode: "default",

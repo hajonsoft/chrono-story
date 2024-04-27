@@ -3,13 +3,18 @@ import React, { useEffect, useState } from "react";
 import { firestore } from "@/firebase";
 import { Box } from "@mui/system";
 import { doc, onSnapshot } from "firebase/firestore";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import ViewCapsule from "./ViewCapsule";
+import Title from "./title";
+import { updateTimeline } from "../../../redux/globalSlice";
 
 const TimelineDisplay = () => {
   const [timeline, setTimeline] = useState([]);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const { id } = useParams();
+  const dispatch = useDispatch();
   const globalState = useSelector((state) => state.global);
 
   useEffect(() => {
@@ -20,8 +25,11 @@ const TimelineDisplay = () => {
       doc(firestore, "users", userId, "timelines", id),
       (snapshot) => {
         if (snapshot.exists()) {
-          const timelineData = snapshot.data().entries || [];
-          setTimeline(timelineData.sort((a, b) => a.year - b.year));
+          const timeLineData = snapshot.data();
+          setName(timeLineData.name);
+          setDescription(timeLineData.description);
+          const timelineEntries = timeLineData.entries || [];
+          setTimeline(timelineEntries.sort((a, b) => a.year - b.year));
         } else {
           console.log("No such document!");
         }
@@ -35,10 +43,26 @@ const TimelineDisplay = () => {
   }, [globalState.user.uid, id]);
 
   return (
-    <Box>
+    <Box sx={{ width: "100%" }}>
+      <Title
+        title={name}
+        description={description}
+        handleTitleChange={(e) => {
+          setName(e);
+        }}
+        handleDescriptionChange={(e) => {
+          setDescription(e);
+        }}
+        handleSaveDescription={() => {
+          dispatch(updateTimeline({ description }));
+        }}
+        handleSaveName={() => {
+          dispatch(updateTimeline({ name }));
+        }}
+      />
       {timeline.length === 0 && <p>No entries found</p>}
-      {timeline.map((entry) => (
-        <ViewCapsule entry={entry} key={entry.id} />
+      {timeline.map((entry, index) => (
+        <ViewCapsule entry={entry} key={`timeline-${entry.id}-${index}`} />
       ))}
     </Box>
   );

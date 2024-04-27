@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 
 import { auth, firestore } from "@/firebase";
-import { setMode, setUser } from "@/redux/globalSlice";
+import { setActiveTimeLine, setMode, setUser } from "@/redux/globalSlice";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import {
@@ -22,7 +22,6 @@ import { signOut } from "firebase/auth";
 import { collection, onSnapshot } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setActiveTimeLine } from "../../redux/globalSlice";
 
 const Header = () => {
   const [timelines, setTimelines] = React.useState([]);
@@ -46,7 +45,7 @@ const Header = () => {
     );
 
     return unsubscribe;
-  }, [globalState.user.uid]);
+  }, [globalState.user?.uid]);
 
   const handleSignOut = () => {
     signOut(auth)

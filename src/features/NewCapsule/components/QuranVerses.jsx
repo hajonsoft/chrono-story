@@ -71,7 +71,7 @@ const QuranVerse = () => {
       </Stack>
       <Box sx={{ padding: "8px" }}>
         {globalState.activeCapsule.verses?.map((verse, index) => (
-          <Card key={index} sx={{ marginTop: 2, position: "relative" }}>
+          <Card key={`verse-${index}`} sx={{ marginTop: 2, position: "relative" }}>
             <IconButton
               onClick={() => handleDeleteVerse(verse)}
               size="small"

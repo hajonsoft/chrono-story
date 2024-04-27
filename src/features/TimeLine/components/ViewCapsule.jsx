@@ -47,7 +47,7 @@ const ViewCapsule = ({ entry }) => {
   };
 
   return (
-    <Card key={entry.id} sx={{ padding: "16px", margin: "16px" }}>
+    <Card sx={{ padding: "16px", margin: "16px" }}>
       <CardContent>
         <Stack spacing={2} direction={"row"}>
           <Typography variant="h5" sx={{ width: "8%" }}>
@@ -68,7 +68,7 @@ const ViewCapsule = ({ entry }) => {
                 {entry.title}
               </Typography>
               {entry.tags?.map((tag, index) => (
-                <Chip key={index} label={tag} style={{ margin: 5 }} />
+                <Chip key={`tag-${index}`} label={tag} style={{ margin: 5 }} />
               ))}
             </Stack>
             <Typography variant="body1" align="left">
@@ -97,11 +97,11 @@ const ViewCapsule = ({ entry }) => {
                     }}
                   >
                     <Box sx={{ flexGrow: 1 }}>
-                      <Typography key={index} variant="body2" align="right">
+                      <Typography key={`verse-text-${index}`} variant="body2" align="right">
                         {verse.text}
                       </Typography>
                       <Typography
-                        key={index}
+                        key={`verse-text-0-${index}`}
                         variant="body2"
                         align="right"
                         color={"textSecondary"}
@@ -136,9 +136,9 @@ const ViewCapsule = ({ entry }) => {
                 </Box>
               ))}
             <Stack direction={"row"} spacing={1}>
-              {entry.photos?.map((photo) => (
+              {entry.photos?.map((photo, index) => (
                 <img
-                  key={photo.image}
+                  key={`photo-${photo.image}-${index}`}
                   src={photo.image}
                   alt={photo.title}
                   style={{ width: "50px", cursor: "pointer" }}

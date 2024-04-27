@@ -16,8 +16,8 @@ const TimeCapsule = ({ title, description, year, image, photos }) => {
         <Typography variant={"h5"}>{title}</Typography>
         <Typography variant={"body1"}>{description}</Typography>
         <Stack direction={"row"} spacing={1}>
-          {photos?.map((photo) => (
-            <Stack key={photo.title} sx={{ width: 96 }}>
+          {photos?.map((photo, index) => (
+            <Stack key={`photos-${photo.title}-${index}`} sx={{ width: 96 }}>
               <img height="64" src={photo.image} alt={photo.title} />
               <Box>
                 <Typography variant={"body2"}>{photo.title}</Typography>
