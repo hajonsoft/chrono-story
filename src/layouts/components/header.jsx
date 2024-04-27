@@ -17,6 +17,8 @@ import {
   Stack,
   Toolbar,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { signOut } from "firebase/auth";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -26,6 +28,9 @@ import { useNavigate } from "react-router-dom";
 const Header = () => {
   const [timelines, setTimelines] = React.useState([]);
   const globalState = useSelector((state) => state.global);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -116,9 +121,11 @@ const Header = () => {
             sx={{ marginLeft: 2 }}
           >
             <AddBoxIcon sx={{ color: "#fff" }} />
-            <Typography variant="body1" sx={{ color: "#fff" }}>
-              New Capsule
-            </Typography>
+            {!isMobile && (
+              <Typography variant="body1" sx={{ color: "#fff" }}>
+                New Capsule
+              </Typography>
+            )}
           </IconButton>
         </Stack>
         <Stack direction={"row"} alignItems={"center"}>
@@ -127,9 +134,11 @@ const Header = () => {
               ? globalState?.user?.displayName?.[0]
               : globalState?.user?.email?.[0]}
           </Avatar>
-          <Typography sx={{ marginLeft: 1 }}>
-            {globalState?.user?.displayName || globalState?.user?.email}
-          </Typography>
+          {!isMobile && (
+            <Typography sx={{ marginLeft: 1 }}>
+              {globalState?.user?.displayName || globalState?.user?.email}
+            </Typography>
+          )}
           <Button
             onClick={handleSignOut}
             sx={{ color: "#fff", textTransform: "lowercase" }}
