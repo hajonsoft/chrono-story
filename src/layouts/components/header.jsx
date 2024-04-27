@@ -33,11 +33,10 @@ const Header = () => {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   useEffect(() => {
     const userId = globalState.user?.uid;
     if (!userId) return;
-
+    
     const unsubscribe = onSnapshot(
       collection(firestore, "users", userId, "timelines"),
       (snapshot) => {
@@ -48,7 +47,7 @@ const Header = () => {
         setTimelines(timelinesData);
       }
     );
-
+  
     return unsubscribe;
   }, [globalState.user?.uid]);
 
@@ -63,6 +62,7 @@ const Header = () => {
   };
 
   const handleTimelineChange = (event) => {
+    if (event.target.value === "") return;
     dispatch(
       setActiveTimeLine({
         key: event.target.value,

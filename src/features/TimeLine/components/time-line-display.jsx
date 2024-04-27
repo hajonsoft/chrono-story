@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { firestore } from "@/firebase";
 import { Box } from "@mui/system";
 import { doc, onSnapshot } from "firebase/firestore";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { updateTimeline } from "../../../redux/globalSlice";
 import ViewCapsule from "./ViewCapsule";
 import Title from "./title";
-import { updateTimeline } from "../../../redux/globalSlice";
 
 const TimelineDisplay = () => {
   const [timeline, setTimeline] = useState([]);
@@ -53,11 +53,8 @@ const TimelineDisplay = () => {
         handleDescriptionChange={(e) => {
           setDescription(e);
         }}
-        handleSaveDescription={() => {
-          dispatch(updateTimeline({ description }));
-        }}
-        handleSaveName={() => {
-          dispatch(updateTimeline({ name }));
+        handleSave={() => {
+          dispatch(updateTimeline({ name, description }));
         }}
       />
       {timeline.length === 0 && <p>No entries found</p>}

@@ -6,8 +6,7 @@ import { Box, IconButton, TextField, Typography } from "@mui/material";
 const Title = ({
   handleTitleChange,
   handleDescriptionChange,
-  handleSaveDescription,
-  handleSaveName,
+  handleSave,
   title,
   description,
 }) => {
@@ -54,7 +53,7 @@ const Title = ({
           }}
           onClick={() => {
             if (editName) {
-              handleSaveName();
+              handleSave();
             }
             setEditName(!editName);
           }}
@@ -90,7 +89,7 @@ const Title = ({
           }}
           onClick={() => {
             if (editDesc) {
-              handleSaveDescription();
+              handleSave();
             }
             setEditDesc(!editDesc);
           }}
