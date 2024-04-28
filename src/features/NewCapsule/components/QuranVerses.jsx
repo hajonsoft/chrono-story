@@ -13,6 +13,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
+import { searchVerse } from "../../../redux/globalSlice";
 
 // TODO: Make the quran verse into maximum height, so that it can be scrolled, allow drag and drop to reorder the verses here and in the display component
 const QuranVerse = () => {
@@ -23,10 +24,18 @@ const QuranVerse = () => {
 
   const handleAddVerse = async () => {
     setLoading(true);
-    dispatch(fetchVerse(reference)).then(() => {
-      setLoading(false);
-      setReference("");
-    });
+    if (!reference) return;
+    if (reference.includes(":")) {
+      dispatch(fetchVerse({ reference })).then(() => {
+        setLoading(false);
+        setReference("");
+      });
+    } else {
+      dispatch(searchVerse({ keyword: reference })).then(() => {
+        setLoading(false);
+        setReference("");
+      });
+    }
   };
 
   const handleDeleteVerse = (verseToDelete) => {
@@ -55,7 +64,7 @@ const QuranVerse = () => {
     <Stack sx={{ width: "100%" }} display={"flex"} justifyContent={"flex-end"}>
       <Stack direction={"row-reverse"} spacing={2} sx={{ width: "100%" }}>
         <TextField
-          label="surah:ayah"
+          label="surah:ayah or arabic text"
           variant="outlined"
           value={reference}
           onChange={(e) => setReference(e.target.value)}
@@ -71,7 +80,10 @@ const QuranVerse = () => {
       </Stack>
       <Box sx={{ padding: "8px" }}>
         {globalState.activeCapsule.verses?.map((verse, index) => (
-          <Card key={`verse-${index}`} sx={{ marginTop: 2, position: "relative" }}>
+          <Card
+            key={`verse-${index}`}
+            sx={{ marginTop: 2, position: "relative" }}
+          >
             <IconButton
               onClick={() => handleDeleteVerse(verse)}
               size="small"
@@ -86,7 +98,7 @@ const QuranVerse = () => {
             <CardContent>
               <Stack direction={"row"} spacing={1}>
                 <TextField
-                  value={verse.comment}
+                  value={verse.comments}
                   onChange={(e) =>
                     handleVerseCommentChange(e.target.value, verse)
                   }

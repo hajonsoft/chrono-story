@@ -1,14 +1,21 @@
 import { Box, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { fetchAllTimelines } from "@/redux/globalSlice";
 
 const TimeLines = () => {
+  const dispatch = useDispatch();
+
   return (
     <Box mt={2}>
       <Typography variant="h4" gutterBottom>
         Welcome!
       </Typography>
       <Typography variant="body1">
-        You are now logged in. You can create new timelines or view existing
-        ones.
+        You are now logged in. You can create new timelines or{" "}
+        <Link to="#" onClick={() => dispatch(fetchAllTimelines())}>
+          view existing ones
+        </Link>
       </Typography>
     </Box>
   );

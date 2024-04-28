@@ -1,7 +1,45 @@
 import { auth, firestore } from "@/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { doc, runTransaction, setDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  runTransaction,
+  setDoc,
+  updateDoc,
+  collection,
+  getDocs,
+  deleteDoc
+} from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+
+export const fetchAllTimelines = createAsyncThunk(
+  "global/fetchAllTimelines",
+  async (_, { getState, dispatch, rejectWithValue }) => {
+    try {
+      const userId = auth?.currentUser?.uid;
+      if (!userId) {
+        return rejectWithValue('User ID is null or undefined');
+      }
+      // Get a reference to the timelines collection
+      const timelinesCollectionRef = collection(
+        firestore,
+        `users/${userId}/timelines`
+      );
+
+      // Get all timelines documents
+      const timelinesSnapshot = await getDocs(timelinesCollectionRef);
+
+      // Convert the timelines documents to an array of timelines
+      const timelines = timelinesSnapshot.docs.map((doc) => ({
+        key: doc.id,
+        ...doc.data(),
+      }));
+      dispatch(setTimelines(timelines));
+    } catch (error) {
+      console.error("Error fetching timelines: ", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 export const saveNewCapsule = createAsyncThunk(
   "capsules/saveNewEntry",
@@ -193,18 +231,16 @@ export const updateTimeline = createAsyncThunk(
 
 export const fetchVerse = createAsyncThunk(
   "global/fetchVerse",
-  async (reference, { getState, dispatch }) => {
+  async ({ reference, comments }, { getState, dispatch }) => {
+    console.log("📢[globalSlice.js:197]: reference: ", reference);
     try {
-      // Fetch the verse using the API
       const response = await fetch(
         `https://api.alquran.cloud/v1/ayah/${reference}`
       );
       const data = await response.json();
-
-      // Extract the verse text from the response
+      console.log("📢[globalSlice.js:202]: data: ", data);
       const verseText = data.data.text;
       const name = data.data.surah.name;
-
       const newCapsule = { ...getState().global.activeCapsule };
       newCapsule.verses = [
         ...newCapsule.verses,
@@ -212,11 +248,10 @@ export const fetchVerse = createAsyncThunk(
           id: uuidv4(),
           text: verseText,
           reference: reference,
-          comments: "",
+          comments: comments || "",
           name,
         },
       ];
-
       dispatch(setActiveCapsule(newCapsule));
     } catch (error) {
       console.error("Error fetching verse:", error);
@@ -225,6 +260,69 @@ export const fetchVerse = createAsyncThunk(
   }
 );
 
+export const searchVerse = createAsyncThunk(
+  "global/fetchVerse",
+  async ({ keyword }, { getState, dispatch }) => {
+    try {
+      // Fetch the verse using the API
+      const response = await fetch(
+        `https://api.alquran.cloud/v1/search/${keyword}/all/ar`
+      );
+      const data = await response.json();
+      const matches = data.data.matches;
+      if (matches.length === 0) {
+        throw new Error("No verses found");
+      }
+
+      const referenceMap = matches.reduce((map, match) => {
+        const reference = `${match.surah.number}:${match.numberInSurah}`;
+      
+        // If the reference is already in the map, append the match.text
+        // Otherwise, set the match.text as the value for the reference
+        map.set(reference, map.has(reference) ? map.get(reference) + match.text : match.text);
+      
+        return map;
+      }, new Map());
+
+      console.log("📢[globalSlice.js:287]: referenceMap: ", referenceMap);
+      referenceMap.forEach((text, reference) => {
+        console.log("📢[globalSlice.js:239]: match: ", reference, text);
+        dispatch(
+          fetchVerse({
+            reference,
+            comments: text,
+          })
+        );
+      });
+    } catch (error) {
+      console.error("Error fetching verse:", error);
+      throw error;
+    }
+  }
+);
+
+export const deleteTimeline = createAsyncThunk(
+  "capsules/deleteTimeline",
+  async (timelineKey, { getState, rejectWithValue }) => {
+    try {
+      const userId = auth.currentUser.uid;
+
+      // Get a reference to the existing timeline document
+      const timelineDocRef = doc(
+        firestore,
+        `users/${userId}/timelines/${timelineKey}`
+      );
+
+      // Delete the timeline document
+      await deleteDoc(timelineDocRef);
+
+      console.log("Timeline deleted successfully");
+    } catch (error) {
+      console.error("Error deleting timeline: ", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
 // export const moveRecords = createAsyncThunk(
 //   "capsules/moveRecords",
 //   async (_, { rejectWithValue }) => {
@@ -272,6 +370,7 @@ const initialState = {
     open: false,
     message: "",
   },
+  timelines: [],
 };
 
 export const globalSlice = createSlice({
@@ -292,6 +391,9 @@ export const globalSlice = createSlice({
     },
     setUser: (state, action) => {
       state.user = action.payload;
+    },
+    setTimelines: (state, action) => {
+      state.timelines = action.payload;
     },
     extraReducers: (builder) => {
       builder
@@ -325,6 +427,7 @@ export const {
   setActiveTimeLine,
   setSnackbar,
   setUser,
+  setTimelines
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

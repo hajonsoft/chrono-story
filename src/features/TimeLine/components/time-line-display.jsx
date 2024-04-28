@@ -4,8 +4,8 @@ import { firestore } from "@/firebase";
 import { Box } from "@mui/system";
 import { doc, onSnapshot } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { updateTimeline } from "../../../redux/globalSlice";
+import { Link, useParams } from "react-router-dom";
+import { deleteTimeline, updateTimeline } from "../../../redux/globalSlice";
 import ViewCapsule from "./ViewCapsule";
 import Title from "./title";
 
@@ -57,7 +57,14 @@ const TimelineDisplay = () => {
           dispatch(updateTimeline({ name, description }));
         }}
       />
-      {timeline.length === 0 && <p>No entries found</p>}
+      {timeline.length === 0 && (
+        <div>
+          <div>No entries found </div>
+          <Link to="#" onClick={() => dispatch(deleteTimeline(id))}>
+            Delete timeline
+          </Link>
+        </div>
+      )}
       {timeline.map((entry, index) => (
         <ViewCapsule entry={entry} key={`timeline-${entry.id}-${index}`} />
       ))}

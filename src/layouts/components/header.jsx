@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { auth, firestore } from "@/firebase";
+import { auth } from "@/firebase";
 import { setActiveTimeLine, setMode, setUser } from "@/redux/globalSlice";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -21,12 +21,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { signOut } from "firebase/auth";
-import { collection, onSnapshot } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { fetchAllTimelines } from "../../redux/globalSlice";
 
 const Header = () => {
-  const [timelines, setTimelines] = React.useState([]);
+  const timelines = useSelector((state) => state.global.timelines);
   const globalState = useSelector((state) => state.global);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -34,22 +34,8 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   useEffect(() => {
-    const userId = globalState.user?.uid;
-    if (!userId) return;
-    
-    const unsubscribe = onSnapshot(
-      collection(firestore, "users", userId, "timelines"),
-      (snapshot) => {
-        const timelinesData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          name: doc.data().name,
-        }));
-        setTimelines(timelinesData);
-      }
-    );
-  
-    return unsubscribe;
-  }, [globalState.user?.uid]);
+    dispatch(fetchAllTimelines());
+  }, [dispatch]);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -66,7 +52,7 @@ const Header = () => {
     dispatch(
       setActiveTimeLine({
         key: event.target.value,
-        name: timelines.find((timeline) => timeline.id === event.target.value)
+        name: timelines.find((timeline) => timeline.key === event.target.value)
           .name,
       })
     );
@@ -105,7 +91,7 @@ const Header = () => {
                   Select a timeline
                 </MenuItem>
                 {timelines.map((timeline) => (
-                  <MenuItem value={timeline.id} key={timeline.id}>
+                  <MenuItem value={timeline.key} key={timeline.key}>
                     {timeline.name}
                   </MenuItem>
                 ))}
