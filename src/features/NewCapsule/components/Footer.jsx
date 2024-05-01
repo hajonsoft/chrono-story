@@ -2,7 +2,7 @@ import React from "react";
 
 import {
   saveEditCapsule,
-  saveNewCapsule,
+  saveNewCapsuleMetadata,
   setMode,
   setSnackbar,
 } from "@/redux/globalSlice";
@@ -19,7 +19,7 @@ const Footer = () => {
   const handleSaveNewCapsule = () => {
     setLoading(true);
     if (globalState.mode === "add-capsule") {
-      dispatch(saveNewCapsule())
+      dispatch(saveNewCapsuleMetadata())
         .then(() => {
           dispatch(setMode("default"));
           setLoading(false);

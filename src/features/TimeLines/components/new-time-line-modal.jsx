@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+
 import {
   Button,
   Dialog,
@@ -5,28 +7,29 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import React, { useState } from "react";
 
-import {
-  saveNewTimeLine,
-  setActiveTimeLine,
-  setMode,
-  setSnackbar,
-} from "@/redux/globalSlice";
+import { saveNewTimeLine, setMode, setSnackbar } from "@/redux/globalSlice";
 import { CircularProgress, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 
 const NewTimeLineModal = () => {
   const globalState = useSelector((state) => state.global);
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState("");
+  const dispatch = useDispatch();
+
   const handleSaveNewTimeLine = () => {
     setLoading(true);
-    dispatch(saveNewTimeLine())
+    dispatch(
+      saveNewTimeLine({
+        name,
+      })
+    )
       .then((action) => {
         if (saveNewTimeLine.fulfilled.match(action)) {
           dispatch(setMode("default"));
           dispatch(setSnackbar({ open: true, message: "New Timeline Saved" }));
+          setName("");
           setLoading(false);
         }
       })
@@ -49,12 +52,9 @@ const NewTimeLineModal = () => {
       <DialogContent sx={{ padding: "16px" }}>
         <TextField
           placeholder="Time line Name"
-          value={globalState.activeTimeline.name}
+          value={name}
           fullWidth
-          onChange={(event) =>
-            dispatch(setActiveTimeLine({ name: event.target.value }))
-          }
-          autoFocus
+          onChange={(event) => setName(event.target.value)}
         />
       </DialogContent>
       <DialogActions>

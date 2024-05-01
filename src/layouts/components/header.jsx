@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 
-import { auth } from "@/firebase";
+import { auth, firestore } from "@/firebase";
 import { setActiveTimeLine, setMode, setUser } from "@/redux/globalSlice";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -21,21 +21,39 @@ import {
   useTheme,
 } from "@mui/material";
 import { signOut } from "firebase/auth";
+import { collection, onSnapshot } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { fetchAllTimelines } from "../../redux/globalSlice";
+import { setTimelines } from "../../redux/globalSlice";
 
 const Header = () => {
-  const timelines = useSelector((state) => state.global.timelines);
+  const [loading, setLoading] = React.useState(false);
   const globalState = useSelector((state) => state.global);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   useEffect(() => {
-    dispatch(fetchAllTimelines());
-  }, [dispatch]);
+    const userId = globalState.user?.uid;
+
+    if (!userId) return;
+    setLoading(true);
+    const unsubscribe = onSnapshot(
+      collection(firestore, "metadata", userId, "timelines"),
+      (snapshot) => {
+        const timelines = {};
+        snapshot.docs.forEach((doc) => {
+          timelines[doc.id] = doc.data();
+        });
+        dispatch(setTimelines(timelines));
+        setLoading(false);
+      }
+    );
+
+    return unsubscribe;
+  }, [dispatch, globalState.user?.uid]);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -49,13 +67,7 @@ const Header = () => {
 
   const handleTimelineChange = (event) => {
     if (event.target.value === "") return;
-    dispatch(
-      setActiveTimeLine({
-        key: event.target.value,
-        name: timelines.find((timeline) => timeline.key === event.target.value)
-          .name,
-      })
-    );
+    dispatch(setActiveTimeLine(event.target.value));
     navigate(`/timeline/${event.target.value}`);
   };
 
@@ -79,20 +91,18 @@ const Header = () => {
               sx={{ backgroundColor: "#fff", marginRight: 2, flexGrow: 1 }}
             >
               <InputLabel id="timeline-select-label">
-                Select a timeline
+                {loading ? "loading" : "Select a timeline"}
               </InputLabel>
               <Select
                 labelId="timeline-select-label"
-                value={globalState.activeTimeline.key}
+                value={globalState.activeTimeline || ""}
                 onChange={handleTimelineChange}
                 sx={{ textAlign: "left" }}
               >
-                <MenuItem value="" disabled>
-                  Select a timeline
-                </MenuItem>
-                {timelines.map((timeline) => (
-                  <MenuItem value={timeline.key} key={timeline.key}>
-                    {timeline.name}
+                <MenuItem value={""}>Select a Time Line</MenuItem>
+                {Object.keys(globalState.timelines).map((key) => (
+                  <MenuItem value={key} key={key}>
+                    {globalState.timelines[key].name}
                   </MenuItem>
                 ))}
               </Select>
@@ -103,7 +113,7 @@ const Header = () => {
           </Box>
           <IconButton
             onClick={() => dispatch(setMode("add-capsule"))}
-            disabled={!globalState.activeTimeline.key}
+            disabled={!globalState.activeTimeline}
             sx={{ marginLeft: 2 }}
           >
             <AddBoxIcon sx={{ color: "#fff" }} />

@@ -1,11 +1,10 @@
 import React from "react";
 
 import formatYear from "@/helpers/formatYear";
-import { deleteCapsule, setActiveCapsule } from "@/redux/globalSlice";
+import { deleteCapsule, setActiveCapsule, setMode } from "@/redux/globalSlice";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {
-  Box,
   Button,
   Card,
   CardActions,
@@ -17,7 +16,6 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { setMode } from "@/redux/globalSlice";
 
 const ViewCapsule = ({ entry }) => {
   const [loading, setLoading] = React.useState(false);
@@ -74,7 +72,7 @@ const ViewCapsule = ({ entry }) => {
             <Typography variant="body1" align="left">
               {entry.description}
             </Typography>
-            {entry.verses
+            {/* {entryVerses
               ?.sort((a, b) => {
                 if (!a.order) return 1;
                 if (!b.order) return -1;
@@ -134,8 +132,8 @@ const ViewCapsule = ({ entry }) => {
                     </Box>
                   </Box>
                 </Box>
-              ))}
-            <Stack direction={"row"} spacing={1}>
+              ))} */}
+            {/* <Stack direction={"row"} spacing={1}>
               {entry.photos?.map((photo, index) => (
                 <img
                   key={`photo-${photo.image}-${index}`}
@@ -145,7 +143,7 @@ const ViewCapsule = ({ entry }) => {
                   onClick={() => window.open(photo.image)}
                 />
               ))}
-            </Stack>
+            </Stack> */}
           </Stack>
         </Stack>
       </CardContent>

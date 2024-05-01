@@ -1,23 +1,23 @@
 import { auth, firestore } from "@/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
+  collection,
+  deleteDoc,
   doc,
+  getDocs,
   runTransaction,
   setDoc,
   updateDoc,
-  collection,
-  getDocs,
-  deleteDoc
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
 
-export const fetchAllTimelines = createAsyncThunk(
-  "global/fetchAllTimelines",
+export const fetchAllTimelinesMetadata = createAsyncThunk(
+  "timelines/fetchAllTimelinesMetadata",
   async (_, { getState, dispatch, rejectWithValue }) => {
     try {
       const userId = auth?.currentUser?.uid;
       if (!userId) {
-        return rejectWithValue('User ID is null or undefined');
+        return rejectWithValue("User ID is null or undefined");
       }
       // Get a reference to the timelines collection
       const timelinesCollectionRef = collection(
@@ -41,52 +41,32 @@ export const fetchAllTimelines = createAsyncThunk(
   }
 );
 
-export const saveNewCapsule = createAsyncThunk(
-  "capsules/saveNewEntry",
+export const saveNewCapsuleMetadata = createAsyncThunk(
+  "capsules/saveNewCapsuleMetadata",
   async (_, { getState, rejectWithValue }) => {
     try {
       const activeCapsule = { ...getState().global.activeCapsule };
-      activeCapsule.id = uuidv4();
       const { activeTimeline } = getState().global;
       // Check if activeTimelineKey is not empty
-      if (!activeTimeline?.key) {
+      if (!activeTimeline) {
         return rejectWithValue("Active timeline key is empty");
       }
-      const userId = auth.currentUser.uid;
-      const timelineDocRef = doc(
+
+      // Check if capsuleId is present, if not generate a new one
+      if (!activeCapsule.id) {
+        activeCapsule.id = uuidv4();
+      }
+
+      const capsuleDocRef = doc(
         firestore,
-        `users/${userId}/timelines/${activeTimeline.key}`
+        `capsule/${activeTimeline}/metadata/${activeCapsule.id}`
       );
 
-      // Generate unique IDs for photos, tags, and verses
-      activeCapsule.photos = activeCapsule.photos.map((photo) => ({
-        ...photo,
-        id: uuidv4(),
-      }));
-      activeCapsule.verses = activeCapsule.verses.map((verse) => ({
-        ...verse,
-        id: uuidv4(),
-      }));
+      await setDoc(capsuleDocRef, activeCapsule);
 
-      await runTransaction(firestore, async (transaction) => {
-        // Fetch the document data within the transaction
-        const timelineDocSnapshot = await transaction.get(timelineDocRef);
-
-        // Initialize the entries array or retrieve existing one
-        let entries = timelineDocSnapshot.exists()
-          ? timelineDocSnapshot.data().entries || []
-          : [];
-
-        // Append the new entry to the entries array
-        entries.push(activeCapsule);
-
-        // Update the document with the modified entries array
-        transaction.update(timelineDocRef, { entries });
-      });
-
-      console.log("Entry added to the timeline successfully");
+      console.log("Capsule information saved successfully");
     } catch (error) {
-      console.error("Error adding entry to the timeline: ", error);
+      console.error("Error saving capsule information: ", error);
       return rejectWithValue(error.message);
     }
   }
@@ -168,24 +148,29 @@ export const saveEditCapsule = createAsyncThunk(
 
 export const saveNewTimeLine = createAsyncThunk(
   "capsules/saveNewTimeLine",
-  async (_, { getState, rejectWithValue }) => {
+  async ({ name }, { getState, rejectWithValue }) => {
     try {
-      const { activeTimeline } = getState().global;
-      const userId = auth.currentUser.uid;
+      const userId = auth.currentUser?.uid;
+      if (!userId) {
+        return rejectWithValue("User ID is null or undefined");
+      }
+
+      if (!name) {
+        return rejectWithValue("Timeline name is empty");
+      }
 
       // Create a new unique key for the timeline
       const newTimelineKey = uuidv4();
 
       // Create the new timeline
       const newTimeline = {
-        entries: [],
-        name: activeTimeline.name || "Untitled",
+        name,
       };
 
       // Get a reference to the new timeline document
       const newTimelineDocRef = doc(
         firestore,
-        `users/${userId}/timelines/${newTimelineKey}`
+        `metadata/${userId}/timelines/${newTimelineKey}`
       );
 
       // Set the new timeline document with the new timeline data
@@ -199,8 +184,8 @@ export const saveNewTimeLine = createAsyncThunk(
   }
 );
 
-export const updateTimeline = createAsyncThunk(
-  "capsules/updateTimeline",
+export const updateTimelineMetaData = createAsyncThunk(
+  "timeline/updateTimelineMetaData",
   async (updateData, { getState, rejectWithValue }) => {
     try {
       const { activeTimeline } = getState().global;
@@ -209,16 +194,13 @@ export const updateTimeline = createAsyncThunk(
       // Get a reference to the existing timeline document
       const timelineDocRef = doc(
         firestore,
-        `users/${userId}/timelines/${activeTimeline.key}`
+        `metadata/${userId}/timelines/${activeTimeline}`
       );
 
       // Update the timeline document with the new name and description
       await updateDoc(timelineDocRef, {
-        name: updateData.name || activeTimeline.name || "Untitled",
-        description:
-          updateData.description ||
-          activeTimeline.description ||
-          "No Description",
+        name: updateData.name || "Untitled",
+        description: updateData.description || "No Description",
       });
 
       console.log("Timeline updated successfully");
@@ -276,11 +258,14 @@ export const searchVerse = createAsyncThunk(
 
       const referenceMap = matches.reduce((map, match) => {
         const reference = `${match.surah.number}:${match.numberInSurah}`;
-      
+
         // If the reference is already in the map, append the match.text
         // Otherwise, set the match.text as the value for the reference
-        map.set(reference, map.has(reference) ? map.get(reference) + match.text : match.text);
-      
+        map.set(
+          reference,
+          map.has(reference) ? map.get(reference) + match.text : match.text
+        );
+
         return map;
       }, new Map());
 
@@ -302,20 +287,20 @@ export const searchVerse = createAsyncThunk(
 );
 
 export const deleteTimeline = createAsyncThunk(
-  "capsules/deleteTimeline",
-  async (timelineKey, { getState, rejectWithValue }) => {
+  "timeline/deleteTimeline",
+  async (timelineKey, { getState, rejectWithValue, dispatch }) => {
     try {
       const userId = auth.currentUser.uid;
 
       // Get a reference to the existing timeline document
       const timelineDocRef = doc(
         firestore,
-        `users/${userId}/timelines/${timelineKey}`
+        `metadata/${userId}/timelines/${timelineKey}`
       );
 
       // Delete the timeline document
+      dispatch(setActiveTimeLine(null));
       await deleteDoc(timelineDocRef);
-
       console.log("Timeline deleted successfully");
     } catch (error) {
       console.error("Error deleting timeline: ", error);
@@ -358,19 +343,18 @@ const initialState = {
   loading: false,
   user: {},
   activeCapsule: {
+    year: 0,
+    image: "",
+    title: "",
+    description: "",
     tags: [],
-    photos: [],
-    verses: [],
   },
-  activeTimeline: {
-    key: "",
-    name: "",
-  },
+  activeTimeline: null,
   snackbar: {
     open: false,
     message: "",
   },
-  timelines: [],
+  timelines: {},
 };
 
 export const globalSlice = createSlice({
@@ -382,6 +366,9 @@ export const globalSlice = createSlice({
     },
     setActiveCapsule: (state, action) => {
       state.activeCapsule = action.payload;
+    },
+    setTimelineCapsules: (state, action) => {
+      state.timelines[action.payload.id].capsules = action.payload.capsules;
     },
     setActiveTimeLine: (state, action) => {
       state.activeTimeline = action.payload;
@@ -397,13 +384,13 @@ export const globalSlice = createSlice({
     },
     extraReducers: (builder) => {
       builder
-        .addCase(saveNewCapsule.pending, (state) => {
+        .addCase(saveNewCapsuleMetadata.pending, (state) => {
           state.loading = true;
         })
-        .addCase(saveNewCapsule.fulfilled, (state) => {
+        .addCase(saveNewCapsuleMetadata.fulfilled, (state) => {
           state.loading = false;
         })
-        .addCase(saveNewCapsule.rejected, (state, action) => {
+        .addCase(saveNewCapsuleMetadata.rejected, (state, action) => {
           state.loading = false;
           state.error = action.error.message;
         })
@@ -427,7 +414,8 @@ export const {
   setActiveTimeLine,
   setSnackbar,
   setUser,
-  setTimelines
+  setTimelines,
+  setTimelineCapsules,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

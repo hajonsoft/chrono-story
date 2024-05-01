@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from "react";
+
 import CloseIcon from "@mui/icons-material/Close";
 import {
   Dialog,
@@ -5,8 +7,6 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
-
 import uploadImage from "@/hooks/uploadImage";
 import { setActiveCapsule, setMode } from "@/redux/globalSlice";
 import { Add, Close, Delete, Photo } from "@mui/icons-material";
@@ -27,7 +27,7 @@ import Footer from "./components/Footer";
 import QuranVerse from "./components/QuranVerses";
 import Tags from "./components/Tags";
 
-const NewCapsule = () => {
+const CapsuleModal = () => {
   const globalState = useSelector((state) => state.global);
   const dispatch = useDispatch();
   const [photoMode, setPhotoMode] = useState("main");
@@ -285,4 +285,4 @@ const NewCapsule = () => {
   );
 };
 
-export default NewCapsule;
+export default CapsuleModal;

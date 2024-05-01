@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 
 import { firestore } from "@/firebase";
+import {
+  deleteTimeline,
+  setTimelineCapsules,
+  updateTimelineMetaData,
+} from "@/redux/globalSlice";
 import { Box } from "@mui/system";
-import { doc, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, query } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { deleteTimeline, updateTimeline } from "../../../redux/globalSlice";
+
 import ViewCapsule from "./ViewCapsule";
 import Title from "./title";
 
 const TimelineDisplay = () => {
-  const [timeline, setTimeline] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const { id } = useParams();
@@ -20,16 +24,23 @@ const TimelineDisplay = () => {
   useEffect(() => {
     const userId = globalState.user?.uid;
     if (!userId) return;
+    setName(globalState.timelines[id]?.name);
+    setDescription(globalState.timelines[id]?.description);
+    const capsulesCollectionRef = collection(
+      firestore,
+      `capsule/${id}/metadata`
+    );
 
     const unsubscribe = onSnapshot(
-      doc(firestore, "users", userId, "timelines", id),
+      query(capsulesCollectionRef),
       (snapshot) => {
-        if (snapshot.exists()) {
-          const timeLineData = snapshot.data();
-          setName(timeLineData.name);
-          setDescription(timeLineData.description);
-          const timelineEntries = timeLineData.entries || [];
-          setTimeline(timelineEntries.sort((a, b) => a.year - b.year));
+        if (!snapshot.empty) {
+          const capsules = [];
+          snapshot.forEach((doc) => {
+            const capsuleData = doc.data();
+            capsules.push(capsuleData);
+          });
+          dispatch(setTimelineCapsules({ id, capsules })); 
         } else {
           console.log("No such document!");
         }
@@ -40,7 +51,8 @@ const TimelineDisplay = () => {
     );
 
     return unsubscribe;
-  }, [globalState.user.uid, id]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [globalState.user?.uid, id, dispatch]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -54,10 +66,10 @@ const TimelineDisplay = () => {
           setDescription(e);
         }}
         handleSave={() => {
-          dispatch(updateTimeline({ name, description }));
+          dispatch(updateTimelineMetaData({ name, description }));
         }}
       />
-      {timeline.length === 0 && (
+      {globalState.timelines?.[id]?.capsules?.length === 0 && (
         <div>
           <div>No entries found </div>
           <Link to="#" onClick={() => dispatch(deleteTimeline(id))}>
@@ -65,7 +77,7 @@ const TimelineDisplay = () => {
           </Link>
         </div>
       )}
-      {timeline.map((entry, index) => (
+      {globalState.timelines?.[id]?.capsules?.map((entry, index) => (
         <ViewCapsule entry={entry} key={`timeline-${entry.id}-${index}`} />
       ))}
     </Box>

@@ -4,7 +4,7 @@ import { setSnackbar } from "@/redux/globalSlice";
 import { Snackbar } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import NewCapsule from "../features/NewCapsule";
+import CapsuleModal from "../features/NewCapsule/capsule-modal";
 import NewTimeLineModal from "../features/TimeLines/components/new-time-line-modal";
 import Header from "./components/header";
 
@@ -18,10 +18,11 @@ const PrivateLayout = ({ children }) => {
       navigate("/");
     }
   }, [globalState.user, navigate]);
+
   return (
     <>
       <Header />
-      <NewCapsule />
+      <CapsuleModal />
       <NewTimeLineModal />
       <Snackbar
         open={globalState.snackbar.open}

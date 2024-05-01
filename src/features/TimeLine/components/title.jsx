@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 
 import { Check, Edit } from "@mui/icons-material";
-import { Box, IconButton, TextField, Typography } from "@mui/material";
+import { Box, IconButton, TextField, Typography, Tooltip } from "@mui/material";
+import { useParams } from "react-router-dom";
 
 const Title = ({
   handleTitleChange,
@@ -14,6 +15,7 @@ const Title = ({
   const [editDesc, setEditDesc] = useState(false);
   const [hoverName, setHoverName] = useState(false);
   const [hoverDesc, setHoverDesc] = useState(false);
+  const { id } = useParams();
 
   return (
     <Box
@@ -43,7 +45,9 @@ const Title = ({
             variant="outlined"
           />
         ) : (
-          <Typography variant="h6">{title}</Typography>
+          <Tooltip title={`Timeline ID: ${id}`} placement="top-end">
+            <Typography variant="h6">{title}</Typography>
+          </Tooltip>
         )}
         <IconButton
           style={{
