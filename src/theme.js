@@ -1,12 +1,10 @@
 import { createTheme } from "@mui/material";
+import teal from "@mui/material/colors/teal";
+import orange from "@mui/material/colors/orange";
 
 export const theme = createTheme({
   palette: {
-    primary: {
-      main: "#D0000E",
-    },
-    secondary: {
-      main: "#00796B",
-    },
+    primary: teal,
+    secondary: orange,
   },
 });

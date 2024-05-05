@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
 import {
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -31,6 +32,7 @@ const CapsuleModal = () => {
   const globalState = useSelector((state) => state.global);
   const dispatch = useDispatch();
   const [photoMode, setPhotoMode] = useState("main");
+  const [loading, setLoading] = useState(false);
 
   const { openFilePicker, filesContent, loading } = useFilePicker({
     readAs: "DataURL",
@@ -40,10 +42,12 @@ const CapsuleModal = () => {
 
   useEffect(() => {
     async function saveImage() {
+      setLoading(true);
       await uploadImage(
         filesContent[0],
         photoMode === "main" ? handleSaveMainImage : handleSavePhoto
       );
+      setLoading(false);
     }
 
     if (!loading && filesContent && filesContent.length > 0) {
@@ -250,16 +254,19 @@ const CapsuleModal = () => {
                       margin: "10px",
                     }}
                   >
-                    <img
-                      key={photo.image}
-                      src={photo.image}
-                      alt={photo.title}
-                      style={{
-                        width: "50px",
-                        height: "50px",
-                        cursor: "pointer",
-                      }}
-                    />
+                    {!loading && (
+                      <img
+                        key={photo.image}
+                        src={photo.image}
+                        alt={photo.title}
+                        style={{
+                          width: "50px",
+                          height: "50px",
+                          cursor: "pointer",
+                        }}
+                      />
+                    )}
+                    {loading && <CircularProgress color="#D0000E"/>}
                     <IconButton
                       onClick={() => handleDeletePhoto(photo.image)}
                       size="small"

@@ -7,6 +7,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   CardActions,
   CardMedia,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -21,10 +22,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFilePicker } from "use-file-picker";
 import Footer from "./components/Footer";
 import Tags from "./components/Tags";
+import { useTheme } from "@mui/material/styles";
 
 const CapsuleModal = () => {
   const globalState = useSelector((state) => state.global);
+  const [imageLoading, setImageLoading] = React.useState(false);
   const dispatch = useDispatch();
+  const theme = useTheme();
 
   const { openFilePicker, filesContent, loading } = useFilePicker({
     readAs: "DataURL",
@@ -34,7 +38,11 @@ const CapsuleModal = () => {
 
   useEffect(() => {
     async function saveImage() {
+      setImageLoading(true);
       await uploadImage(filesContent[0], handleSaveMainImage);
+      setTimeout(() => {
+        setImageLoading(false);
+      }, 2000);
     }
 
     if (!loading && filesContent && filesContent.length > 0) {
@@ -149,15 +157,22 @@ const CapsuleModal = () => {
                     backgroundColor: "#f5f5f5",
                   }}
                 >
-                  <Tooltip title="Add image">
-                    <IconButton
-                      onClick={() => {
-                        openFilePicker();
-                      }}
-                    >
-                      <Photo />
-                    </IconButton>
-                  </Tooltip>
+                  {!imageLoading && (
+                    <Tooltip title="Add image">
+                      <IconButton
+                        onClick={() => {
+                          openFilePicker();
+                        }}
+                      >
+                        <Photo />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                  {imageLoading && (
+                    <CircularProgress
+                      style={{ color: theme.palette.primary.main }}
+                    />
+                  )}
                 </Box>
               )}
             </Box>

@@ -1,17 +1,14 @@
 import React from "react";
 
 import {
-  saveEditCapsule,
-  saveNewCapsuleMetadata,
+  saveCapsuleMetadata,
   setMode,
   setSnackbar,
 } from "@/redux/globalSlice";
 import { Button, CircularProgress, Stack } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 
 const Footer = () => {
-  const { id } = useParams();
   const [loading, setLoading] = React.useState(false);
   const globalState = useSelector((state) => state.global);
   const dispatch = useDispatch();
@@ -19,7 +16,7 @@ const Footer = () => {
   const handleSaveNewCapsule = () => {
     setLoading(true);
     if (globalState.mode === "add-capsule") {
-      dispatch(saveNewCapsuleMetadata())
+      dispatch(saveCapsuleMetadata())
         .then(() => {
           dispatch(setMode("default"));
           setLoading(false);
@@ -31,12 +28,7 @@ const Footer = () => {
         });
     }
     if (globalState.mode === "edit-capsule") {
-      dispatch(
-        saveEditCapsule({
-          timelineId: id,
-          capsuleId: globalState.activeCapsule.id,
-        })
-      )
+      dispatch(saveCapsuleMetadata())
         .then(() => {
           dispatch(setMode("default"));
           setLoading(false);

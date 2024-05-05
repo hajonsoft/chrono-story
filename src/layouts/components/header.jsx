@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 
-import { auth, firestore } from "@/firebase";
+import { auth } from "@/firebase";
 import { setActiveTimeLine, setMode, setUser } from "@/redux/globalSlice";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import {
   AppBar,
   Avatar,
-  Box,
   Button,
   FormControl,
   IconButton,
@@ -21,13 +20,11 @@ import {
   useTheme,
 } from "@mui/material";
 import { signOut } from "firebase/auth";
-import { collection, onSnapshot } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setTimelines } from "../../redux/globalSlice";
+import { useTimelines } from "../../hooks/useTimelines";
 
 const Header = () => {
-  const [loading, setLoading] = React.useState(false);
   const globalState = useSelector((state) => state.global);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -35,25 +32,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const userId = globalState.user?.uid;
-
-    if (!userId) return;
-    setLoading(true);
-    const unsubscribe = onSnapshot(
-      collection(firestore, "metadata", userId, "timelines"),
-      (snapshot) => {
-        const timelines = {};
-        snapshot.docs.forEach((doc) => {
-          timelines[doc.id] = doc.data();
-        });
-        dispatch(setTimelines(timelines));
-        setLoading(false);
-      }
-    );
-
-    return unsubscribe;
-  }, [dispatch, globalState.user?.uid]);
+  useTimelines();
 
   const handleSignOut = () => {
     signOut(auth)
@@ -82,35 +61,40 @@ const Header = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: 4,
         }}
       >
-        <Stack direction={"row"} alignItems={"center"} sx={{ width: "75%" }}>
-          <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-            <FormControl
-              variant="filled"
-              sx={{ backgroundColor: "#fff", marginRight: 2, flexGrow: 1 }}
+        <Stack direction={"row"} alignItems={"center"} flexGrow={1}>
+          <FormControl
+            variant="filled"
+            fullWidth
+            sx={{ backgroundColor: "white", borderRadius: 1, margin: 1 }}
+          >
+            <InputLabel id="timeline-select-label">
+              Select a timeline
+            </InputLabel>
+            <Select
+              labelId="timeline-select-label"
+              value={globalState.activeTimeline || ""}
+              onChange={handleTimelineChange}
+              sx={{ textAlign: "left" }}
             >
-              <InputLabel id="timeline-select-label">
-                {loading ? "loading" : "Select a timeline"}
-              </InputLabel>
-              <Select
-                labelId="timeline-select-label"
-                value={globalState.activeTimeline || ""}
-                onChange={handleTimelineChange}
-                sx={{ textAlign: "left" }}
-              >
-                <MenuItem value={""}>Select a Time Line</MenuItem>
-                {Object.keys(globalState.timelines).map((key) => (
-                  <MenuItem value={key} key={key}>
-                    {globalState.timelines[key].name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <IconButton onClick={handleAddTimeline}>
-              <AddCircleOutlineIcon sx={{ color: "#fff" }} />
-            </IconButton>
-          </Box>
+              <MenuItem value={""}>Select a Time Line</MenuItem>
+              {Object.keys(globalState.timelines).map((key) => (
+                <MenuItem value={key} key={key}>
+                  {globalState.timelines[key].name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <IconButton onClick={handleAddTimeline}>
+            <AddCircleOutlineIcon sx={{ color: "#fff" }} />
+            {!isMobile && (
+              <Typography variant="body1" sx={{ color: "#fff", margin: 1 }}>
+                New Time Line
+              </Typography>
+            )}
+          </IconButton>
           <IconButton
             onClick={() => dispatch(setMode("add-capsule"))}
             disabled={!globalState.activeTimeline}
@@ -118,7 +102,7 @@ const Header = () => {
           >
             <AddBoxIcon sx={{ color: "#fff" }} />
             {!isMobile && (
-              <Typography variant="body1" sx={{ color: "#fff" }}>
+              <Typography variant="body1" sx={{ color: "#fff", margin: 1 }}>
                 New Capsule
               </Typography>
             )}

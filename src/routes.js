@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import PublicHome from "./features/Home/public-home";
 import TimeLine from "./features/TimeLine";
 import TimeLines from "./features/TimeLines";
-import PrivateLayout from "./layouts/private";
+import PrivateLayout from "./layouts/private-layout";
 import PublicLayout from "./layouts/public";
 
 export const routes = createBrowserRouter([

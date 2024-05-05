@@ -1,21 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Check, Edit } from "@mui/icons-material";
 import { Box, IconButton, TextField, Typography, Tooltip } from "@mui/material";
 import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTimelineMetaData } from "@/redux/globalSlice";
 
-const Title = ({
-  handleTitleChange,
-  handleDescriptionChange,
-  handleSave,
-  title,
-  description,
-}) => {
+const Title = () => {
+  const globalState = useSelector((state) => state.global);
+  const dispatch = useDispatch();
   const [editName, setEditName] = useState(false);
   const [editDesc, setEditDesc] = useState(false);
   const [hoverName, setHoverName] = useState(false);
   const [hoverDesc, setHoverDesc] = useState(false);
   const { id } = useParams();
+  const [title, setTitle] = useState(globalState.timelines?.[id]?.name);
+  const [description, setDescription] = useState(globalState.timelines?.[id]?.description);
+
+  useEffect(() => {
+    setTitle(globalState.timelines?.[id]?.name);
+    setDescription(globalState.timelines?.[id]?.description);
+  }, [globalState.timelines, id]);
+
+  const handleSave = () => {
+    dispatch(updateTimelineMetaData({ name: title, description }));
+  };
 
   return (
     <Box
@@ -40,7 +49,7 @@ const Title = ({
         {editName ? (
           <TextField
             value={title}
-            onChange={(e) => handleTitleChange(e.target.value)}
+            onChange={(e) => setTitle(e.target.value)}
             fullWidth
             variant="outlined"
           />
@@ -77,7 +86,7 @@ const Title = ({
         {editDesc ? (
           <TextField
             value={description}
-            onChange={(e) => handleDescriptionChange(e.target.value)}
+            onChange={(e) => setDescription(e.target.value)}
             fullWidth
             variant="outlined"
             multiline

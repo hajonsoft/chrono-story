@@ -1,7 +1,11 @@
 import React from "react";
 
 import formatYear from "@/helpers/formatYear";
-import { deleteCapsule, setActiveCapsule, setMode } from "@/redux/globalSlice";
+import {
+  deleteCapsuleMetadata,
+  setActiveCapsule,
+  setMode,
+} from "@/redux/globalSlice";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {
@@ -16,6 +20,7 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
+import Photos from "./photos";
 
 const ViewCapsule = ({ entry }) => {
   const [loading, setLoading] = React.useState(false);
@@ -26,7 +31,7 @@ const ViewCapsule = ({ entry }) => {
   const handleDeleteCapsule = () => {
     setLoading(true);
     dispatch(
-      deleteCapsule({
+      deleteCapsuleMetadata({
         timelineId: id,
         capsuleId: entry.id,
       })
@@ -133,17 +138,7 @@ const ViewCapsule = ({ entry }) => {
                   </Box>
                 </Box>
               ))} */}
-            {/* <Stack direction={"row"} spacing={1}>
-              {entry.photos?.map((photo, index) => (
-                <img
-                  key={`photo-${photo.image}-${index}`}
-                  src={photo.image}
-                  alt={photo.title}
-                  style={{ width: "50px", cursor: "pointer" }}
-                  onClick={() => window.open(photo.image)}
-                />
-              ))}
-            </Stack> */}
+            <Photos capsuleId={entry.id}/>
           </Stack>
         </Stack>
       </CardContent>
@@ -153,6 +148,7 @@ const ViewCapsule = ({ entry }) => {
             variant="contained"
             color="primary"
             onClick={handleEditCapsule}
+            disabled={loading}
             startIcon={
               loading ? (
                 <CircularProgress sx={{ color: "#fff" }} />
@@ -167,9 +163,10 @@ const ViewCapsule = ({ entry }) => {
             variant="outlined"
             color="secondary"
             onClick={handleDeleteCapsule}
+            disabled={loading}
             startIcon={
               loading ? (
-                <CircularProgress sx={{ color: "#fff" }} />
+                <CircularProgress sx={{ color: "#D0000E" }} />
               ) : (
                 <DeleteIcon />
               )

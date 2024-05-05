@@ -5,11 +5,11 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  runTransaction,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
 import { v4 as uuidv4 } from "uuid";
+import { arrayUnion } from "firebase/firestore";
 
 export const fetchAllTimelinesMetadata = createAsyncThunk(
   "timelines/fetchAllTimelinesMetadata",
@@ -41,8 +41,8 @@ export const fetchAllTimelinesMetadata = createAsyncThunk(
   }
 );
 
-export const saveNewCapsuleMetadata = createAsyncThunk(
-  "capsules/saveNewCapsuleMetadata",
+export const saveCapsuleMetadata = createAsyncThunk(
+  "capsule/saveCapsuleMetadata",
   async (_, { getState, rejectWithValue }) => {
     try {
       const activeCapsule = { ...getState().global.activeCapsule };
@@ -72,75 +72,49 @@ export const saveNewCapsuleMetadata = createAsyncThunk(
   }
 );
 
-export const deleteCapsule = createAsyncThunk(
-  "capsules/deleteCapsule",
+export const deleteCapsuleMetadata = createAsyncThunk(
+  "capsule/deleteCapsuleMetadata",
   async ({ timelineId, capsuleId }, { rejectWithValue }) => {
     try {
-      const userId = auth.currentUser.uid;
-      const timelineDocRef = doc(
+      const capsuleDocRef = doc(
         firestore,
-        `users/${userId}/timelines/${timelineId}`
+        `capsule/${timelineId}/metadata/${capsuleId}`
       );
+      await deleteDoc(capsuleDocRef);
 
-      await runTransaction(firestore, async (transaction) => {
-        // Fetch the document data within the transaction
-        const timelineDocSnapshot = await transaction.get(timelineDocRef);
-
-        // Initialize the entries array or retrieve existing one
-        let entries = timelineDocSnapshot.exists()
-          ? timelineDocSnapshot.data().entries || []
-          : [];
-
-        // Filter out the capsule with the given capsuleId
-        entries = entries.filter((capsule) => capsule.id !== capsuleId);
-
-        // Update the document with the modified entries array
-        transaction.update(timelineDocRef, { entries });
-      });
-
-      console.log("Capsule deleted from the timeline successfully");
+      console.log("Capsule metadata deleted successfully");
     } catch (error) {
-      console.error("Error deleting capsule from the timeline: ", error);
+      console.error("Error deleting capsule metadata: ", error);
       return rejectWithValue(error.message);
     }
   }
 );
 
-export const saveEditCapsule = createAsyncThunk(
-  "capsules/saveEditCapsule",
-  async ({ timelineId, capsuleId }, { getState, rejectWithValue }) => {
+export const savePhoto = createAsyncThunk(
+  "capsule/savePhoto",
+  async (photo, { getState, rejectWithValue }) => {
     try {
       const activeCapsule = { ...getState().global.activeCapsule };
-      const userId = auth.currentUser.uid;
-      const timelineDocRef = doc(
+      const { activeTimeline } = getState().global;
+      // Check if activeTimelineKey is not empty
+      if (!activeTimeline) {
+        return rejectWithValue("Active timeline key is empty");
+      }
+
+      // Check if capsuleId is present, if not generate a new one
+      if (!activeCapsule.id) {
+        activeCapsule.id = uuidv4();
+      }
+
+      const photoDocRef = doc(
         firestore,
-        `users/${userId}/timelines/${timelineId}`
+        `capsule/${activeTimeline}/photos/${activeCapsule.id}`
       );
-
-      await runTransaction(firestore, async (transaction) => {
-        // Fetch the document data within the transaction
-        const timelineDocSnapshot = await transaction.get(timelineDocRef);
-
-        // Initialize the entries array or retrieve existing one
-        let entries = timelineDocSnapshot.exists()
-          ? timelineDocSnapshot.data().entries || []
-          : [];
-
-        // Find the index of the capsule with the given capsuleId
-        const index = entries.findIndex((capsule) => capsule.id === capsuleId);
-
-        // Replace the capsule at the found index with the activeCapsule
-        if (index !== -1) {
-          entries[index] = activeCapsule;
-        }
-
-        // Update the document with the modified entries array
-        transaction.update(timelineDocRef, { entries });
-      });
-
-      console.log("Capsule updated in the timeline successfully");
+      await setDoc(photoDocRef, { photos: arrayUnion(photo) }, { merge: true });
+      console.log("Photo saved successfully");
+      return photo;
     } catch (error) {
-      console.error("Error updating capsule in the timeline: ", error);
+      console.error("Error saving photo: ", error);
       return rejectWithValue(error.message);
     }
   }
@@ -308,6 +282,7 @@ export const deleteTimeline = createAsyncThunk(
     }
   }
 );
+
 // export const moveRecords = createAsyncThunk(
 //   "capsules/moveRecords",
 //   async (_, { rejectWithValue }) => {
@@ -342,6 +317,7 @@ const initialState = {
   mode: "default",
   loading: false,
   user: {},
+  timelines: {},
   activeCapsule: {
     year: 0,
     image: "",
@@ -354,7 +330,6 @@ const initialState = {
     open: false,
     message: "",
   },
-  timelines: {},
 };
 
 export const globalSlice = createSlice({
@@ -368,7 +343,32 @@ export const globalSlice = createSlice({
       state.activeCapsule = action.payload;
     },
     setTimelineCapsules: (state, action) => {
-      state.timelines[action.payload.id].capsules = action.payload.capsules;
+      state.timelines[action.payload.id].capsules = {
+        ...state.timelines[action.payload.id].capsules,
+        ...action.payload.capsules,
+      };
+    },
+    setTimelinePhotos: (state, action) => {
+      Object.entries(action.payload.photos).forEach(([capsuleId, photos]) => {
+        if (!state.timelines[action.payload.id].capsules[capsuleId]) {
+          state.timelines[action.payload.id].capsules[capsuleId] = {};
+        }
+        state.timelines[action.payload.id].capsules[capsuleId].photos = {
+          ...state.timelines[action.payload.id].capsules[capsuleId].photos,
+          ...photos,
+        };
+      });
+    },
+    setTimelineVerses: (state, action) => {
+      Object.entries(action.payload.verses).forEach(([capsuleId, verses]) => {
+        if (!state.timelines[action.payload.id].capsules[capsuleId]) {
+          state.timelines[action.payload.id].capsules[capsuleId] = {};
+        }
+        state.timelines[action.payload.id].capsules[capsuleId].verses = {
+          ...state.timelines[action.payload.id].capsules[capsuleId].verses,
+          ...verses,
+        };
+      });
     },
     setActiveTimeLine: (state, action) => {
       state.activeTimeline = action.payload;
@@ -382,29 +382,56 @@ export const globalSlice = createSlice({
     setTimelines: (state, action) => {
       state.timelines = action.payload;
     },
-    extraReducers: (builder) => {
-      builder
-        .addCase(saveNewCapsuleMetadata.pending, (state) => {
-          state.loading = true;
-        })
-        .addCase(saveNewCapsuleMetadata.fulfilled, (state) => {
-          state.loading = false;
-        })
-        .addCase(saveNewCapsuleMetadata.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.error.message;
-        })
-        .addCase(saveNewTimeLine.pending, (state) => {
-          state.loading = true;
-        })
-        .addCase(saveNewTimeLine.fulfilled, (state) => {
-          state.loading = false;
-        })
-        .addCase(saveNewTimeLine.rejected, (state, action) => {
-          state.loading = false;
-          state.error = action.error.message;
-        });
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(saveCapsuleMetadata.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(saveCapsuleMetadata.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(saveCapsuleMetadata.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(savePhoto.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(savePhoto.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(savePhoto.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(deleteCapsuleMetadata.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteCapsuleMetadata.fulfilled, (state, action) => {
+        state.loading = false;
+        const { timelineId, capsuleId } = action.payload; // get timelineId and capsuleId from action payload
+        const timeline = state.timelines[timelineId];
+        if (timeline) {
+          timeline.capsules = timeline.capsules.filter(
+            (capsule) => capsule.id !== capsuleId
+          ); // remove the capsule from the timeline
+        }
+      })
+      .addCase(deleteCapsuleMetadata.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(saveNewTimeLine.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(saveNewTimeLine.fulfilled, (state) => {
+        state.loading = false;
+      })
+      .addCase(saveNewTimeLine.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 
@@ -416,6 +443,8 @@ export const {
   setUser,
   setTimelines,
   setTimelineCapsules,
+  setTimelinePhotos,
+  setTimelineVerses,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;
