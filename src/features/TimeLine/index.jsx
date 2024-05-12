@@ -29,7 +29,7 @@ const Timeline = () => {
       )}
       {Object.entries(globalState.timelines?.[id]?.capsules || {}).map(
         ([key, entry], index) => (
-          <ViewCapsule entry={entry} key={`timeline-${key}-${index}`} />
+          <ViewCapsule entry={entry} capsuleId={key} key={`timeline-${key}-${index}`} />
         )
       )}
     </Box>

@@ -90,6 +90,24 @@ export const deleteCapsuleMetadata = createAsyncThunk(
   }
 );
 
+export const deleteCapsulePhotos = createAsyncThunk(
+  "capsule/deleteCapsulePhotos",
+  async ({ timelineId, capsuleId }, { rejectWithValue }) => {
+    try {
+      const capsulePhotosDocRef = doc(
+        firestore,
+        `capsule/${timelineId}/photos/${capsuleId}`
+      );
+      await deleteDoc(capsulePhotosDocRef);
+
+      console.log("Capsule photos deleted successfully");
+    } catch (error) {
+      console.error("Error deleting capsule metadata: ", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const savePhoto = createAsyncThunk(
   "capsule/savePhoto",
   async (photo, { getState, rejectWithValue }) => {
@@ -115,6 +133,38 @@ export const savePhoto = createAsyncThunk(
       return photo;
     } catch (error) {
       console.error("Error saving photo: ", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const saveVerses = createAsyncThunk(
+  "capsule/saveVerses",
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const activeCapsule = { ...getState().global.activeCapsule };
+      const { activeTimeline } = getState().global;
+      const { fetchedVerses } = getState().global;
+      // Check if activeTimelineKey is not empty
+      if (!activeTimeline) {
+        return rejectWithValue("Active timeline key is empty");
+      }
+
+      // Check if capsuleId is present, if not generate a new one
+      if (!activeCapsule.id) {
+        activeCapsule.id = uuidv4();
+      }
+
+      const versesDocRef = doc(
+        firestore,
+        `capsule/${activeTimeline}/verses/${activeCapsule.id}`
+      );
+      const versesArray = Object.values(fetchedVerses);
+      await updateDoc(versesDocRef, { verses: arrayUnion(...versesArray) });
+      console.log("verses saved successfully");
+      return versesArray;
+    } catch (error) {
+      console.error("Error saving verses: ", error);
       return rejectWithValue(error.message);
     }
   }
@@ -197,18 +247,13 @@ export const fetchVerse = createAsyncThunk(
       console.log("📢[globalSlice.js:202]: data: ", data);
       const verseText = data.data.text;
       const name = data.data.surah.name;
-      const newCapsule = { ...getState().global.activeCapsule };
-      newCapsule.verses = [
-        ...newCapsule.verses,
-        {
-          id: uuidv4(),
-          text: verseText,
-          reference: reference,
-          comments: comments || "",
-          name,
-        },
-      ];
-      dispatch(setActiveCapsule(newCapsule));
+      return {
+        id: uuidv4(),
+        text: verseText,
+        reference: reference,
+        comments: comments || "",
+        name,
+      };
     } catch (error) {
       console.error("Error fetching verse:", error);
       throw error;
@@ -217,7 +262,7 @@ export const fetchVerse = createAsyncThunk(
 );
 
 export const searchVerse = createAsyncThunk(
-  "global/fetchVerse",
+  "global/searchVerse",
   async ({ keyword }, { getState, dispatch }) => {
     try {
       // Fetch the verse using the API
@@ -318,6 +363,7 @@ const initialState = {
   loading: false,
   user: {},
   timelines: {},
+  fetchedVerses: {},
   activeCapsule: {
     year: 0,
     image: "",
@@ -410,15 +456,41 @@ export const globalSlice = createSlice({
       })
       .addCase(deleteCapsuleMetadata.fulfilled, (state, action) => {
         state.loading = false;
-        const { timelineId, capsuleId } = action.payload; // get timelineId and capsuleId from action payload
+        const { timelineId, capsuleId } = action.meta.arg; // get timelineId and capsuleId from action payload
         const timeline = state.timelines[timelineId];
         if (timeline) {
-          timeline.capsules = timeline.capsules.filter(
-            (capsule) => capsule.id !== capsuleId
-          ); // remove the capsule from the timeline
+          const capsule = timeline.capsules[capsuleId];
+          if (capsule) {
+            delete timeline.capsules[capsuleId];
+          }
         }
       })
       .addCase(deleteCapsuleMetadata.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchVerse.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchVerse.fulfilled, (state, action) => {
+        state.loading = false;
+        if (!state.fetchedVerses) {
+          state.fetchedVerses = {};
+        }
+        state.fetchedVerses[action.payload.id] = action.payload;
+      })
+      .addCase(fetchVerse.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(saveVerses.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(saveVerses.fulfilled, (state) => {
+        state.loading = false;
+        state.fetchedVerses = {};
+      })
+      .addCase(saveVerses.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       })

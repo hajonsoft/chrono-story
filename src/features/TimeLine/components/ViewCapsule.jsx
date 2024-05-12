@@ -3,6 +3,7 @@ import React from "react";
 import formatYear from "@/helpers/formatYear";
 import {
   deleteCapsuleMetadata,
+  deleteCapsulePhotos,
   setActiveCapsule,
   setMode,
 } from "@/redux/globalSlice";
@@ -21,8 +22,9 @@ import {
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Photos from "./photos";
+import ViewVerse from "../../NewCapsule/components/view-verse";
 
-const ViewCapsule = ({ entry }) => {
+const ViewCapsule = ({ entry, capsuleId }) => {
   const [loading, setLoading] = React.useState(false);
   const { id } = useParams();
 
@@ -33,11 +35,17 @@ const ViewCapsule = ({ entry }) => {
     dispatch(
       deleteCapsuleMetadata({
         timelineId: id,
-        capsuleId: entry.id,
+        capsuleId,
       })
     )
       .then(() => {
         setLoading(false);
+        dispatch(
+          deleteCapsulePhotos({
+            timelineId: id,
+            capsuleId,
+          })
+        );
       })
       .catch(() => {
         console.error("Failed to delete capsule");
@@ -77,68 +85,8 @@ const ViewCapsule = ({ entry }) => {
             <Typography variant="body1" align="left">
               {entry.description}
             </Typography>
-            {/* {entryVerses
-              ?.sort((a, b) => {
-                if (!a.order) return 1;
-                if (!b.order) return -1;
-                return a.order - b.order;
-              })
-              .map((verse, index) => (
-                <Box
-                  key={`verse.reference-${index}`}
-                  sx={{
-                    border: "1px solid red",
-                    marginBottom: "8px",
-                    padding: "4px",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      width: "100%",
-                    }}
-                  >
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography key={`verse-text-${index}`} variant="body2" align="right">
-                        {verse.text}
-                      </Typography>
-                      <Typography
-                        key={`verse-text-0-${index}`}
-                        variant="body2"
-                        align="right"
-                        color={"textSecondary"}
-                      >
-                        {verse.comment}
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        width: "32px",
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        marginLeft: "8px",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          borderRadius: "100%",
-                          backgroundColor: "teal",
-                          color: "white",
-                          width: "24px",
-                          height: "24px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {verse.order}
-                      </Box>
-                    </Box>
-                  </Box>
-                </Box>
-              ))} */}
-            <Photos capsuleId={entry.id}/>
+            <ViewVerse capsuleId={capsuleId} />
+            <Photos capsuleId={entry.id} />
           </Stack>
         </Stack>
       </CardContent>
