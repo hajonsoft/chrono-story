@@ -138,14 +138,17 @@ export const savePhoto = createAsyncThunk(
   }
 );
 
+
 export const saveVerses = createAsyncThunk(
   "capsule/saveVerses",
   async (_, { getState, rejectWithValue }) => {
     try {
-      const activeCapsule = { ...getState().global.activeCapsule };
-      const { activeTimeline } = getState().global;
-      const { fetchedVerses } = getState().global;
-      // Check if activeTimelineKey is not empty
+      const state = getState();
+      const activeCapsule = { ...state.global.activeCapsule };
+      const { activeTimeline } = state.global;
+      const { fetchedVerses } = state.global;
+
+      // Check if activeTimeline is not empty
       if (!activeTimeline) {
         return rejectWithValue("Active timeline key is empty");
       }
@@ -155,13 +158,23 @@ export const saveVerses = createAsyncThunk(
         activeCapsule.id = uuidv4();
       }
 
-      const versesDocRef = doc(
+      // Reference to the verses collection
+      const versesCollectionRef = collection(
         firestore,
-        `capsule/${activeTimeline}/verses/${activeCapsule.id}`
+        `capsule/${activeTimeline}/verses/${activeCapsule.id}/versesCollection`
       );
+
+      // Convert fetchedVerses to an array and save each verse with a unique ID
       const versesArray = Object.values(fetchedVerses);
-      await updateDoc(versesDocRef, { verses: arrayUnion(...versesArray) });
-      console.log("verses saved successfully");
+      const promises = versesArray.map((verse) => {
+        const verseId = uuidv4();
+        const verseDocRef = doc(versesCollectionRef, verseId);
+        return setDoc(verseDocRef, verse);
+      });
+
+      await Promise.all(promises);
+
+      console.log("Verses saved successfully");
       return versesArray;
     } catch (error) {
       console.error("Error saving verses: ", error);
@@ -169,7 +182,6 @@ export const saveVerses = createAsyncThunk(
     }
   }
 );
-
 export const saveNewTimeLine = createAsyncThunk(
   "capsules/saveNewTimeLine",
   async ({ name }, { getState, rejectWithValue }) => {
@@ -271,7 +283,7 @@ export const searchVerse = createAsyncThunk(
       );
       const data = await response.json();
       const matches = data.data.matches;
-      if (matches.length === 0) {
+      if (!matches || matches.length === 0) {
         throw new Error("No verses found");
       }
 
