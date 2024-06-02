@@ -1,6 +1,5 @@
-import React from "react";
-
-import { setActiveCapsule } from "@/redux/globalSlice";
+import useCapsuleVerse from "@/hooks/useCapsuleVerse"; // Adjust the import path accordingly
+import { setActiveCapsule, setMode } from "@/redux/globalSlice";
 import { Delete } from "@mui/icons-material";
 import {
   Box,
@@ -12,17 +11,22 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setMode } from "../../../redux/globalSlice";
-import VerseModal from "./verse-modal";
 import { useParams } from "react-router-dom";
+import { deleteCapsuleVerse } from "../../../redux/globalSlice";
+import VerseModal from "./verse-modal";
 
-// TODO: Make the quran verse into maximum height, so that it can be scrolled, allow drag and drop to reorder the verses here and in the display component
 const ViewVerse = ({ capsuleId }) => {
   const globalState = useSelector((state) => state.global);
   const dispatch = useDispatch();
-
   const { id } = useParams();
+
+  const { loadMoreVerses, hasMore, loading } = useCapsuleVerse(id, capsuleId);
+
+  useEffect(() => {
+    // Optionally, fetch initial verses when component mounts
+  }, [id, capsuleId]);
 
   const handleStartAddVerse = () => {
     const activeCapsule = {
@@ -35,11 +39,10 @@ const ViewVerse = ({ capsuleId }) => {
 
   const handleDeleteVerse = (verseToDelete) => {
     dispatch(
-      setActiveCapsule({
-        ...globalState.activeCapsule,
-        verses: globalState.activeCapsule.verses?.filter(
-          (verse) => verse.reference !== verseToDelete.reference
-        ),
+      deleteCapsuleVerse({
+        timelineId: id,
+        capsuleId,
+        verseId: verseToDelete.id,
       })
     );
   };
@@ -61,8 +64,10 @@ const ViewVerse = ({ capsuleId }) => {
         Add Verse
       </Button>
       <Box sx={{ padding: "8px" }}>
-        {globalState.timelines?.[id]?.capsules?.[capsuleId]?.verses?.verses?.map(
-          (verse, index) => (
+        {globalState.timelines?.[id]?.capsules?.[capsuleId]?.verses &&
+          Object.values(
+            globalState.timelines[id].capsules[capsuleId].verses
+          ).map((verse, index) => (
             <Card
               key={`verse-${index}`}
               sx={{ marginTop: 2, position: "relative" }}
@@ -94,7 +99,15 @@ const ViewVerse = ({ capsuleId }) => {
                 </Stack>
               </CardContent>
             </Card>
-          )
+          ))}
+        {hasMore && (
+          <Button
+            variant="contained"
+            onClick={loadMoreVerses}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Load More"}
+          </Button>
         )}
       </Box>
       <VerseModal />

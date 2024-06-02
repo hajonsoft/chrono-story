@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { fetchVerse, setActiveCapsule } from "@/redux/globalSlice";
+import { fetchVerse, deleteFetchedVerse, updateFetchedVerseComment } from "@/redux/globalSlice";
 import { Delete, LibraryBooks } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -51,25 +51,11 @@ const VerseModal = () => {
   };
 
   const handleDeleteVerse = (verseToDelete) => {
-    dispatch(
-      setActiveCapsule({
-        ...globalState.activeCapsule,
-        verses: globalState.activeCapsule.verses?.filter(
-          (verse) => verse.reference !== verseToDelete.reference
-        ),
-      })
-    );
+    dispatch(deleteFetchedVerse({ verseId: verseToDelete.id }));
   };
 
   const handleVerseCommentChange = (comment, verse) => {
-    dispatch(
-      setActiveCapsule({
-        ...globalState.activeCapsule,
-        verses: globalState.activeCapsule.verses?.map((v) =>
-          v.reference === verse.reference ? { ...v, comment } : v
-        ),
-      })
-    );
+    dispatch(updateFetchedVerseComment({ verseId: verse.id, comment }));
   };
 
   return (
@@ -96,7 +82,7 @@ const VerseModal = () => {
           display={"flex"}
           justifyContent={"flex-end"}
         >
-          <Stack direction={"row-reverse"} spacing={2} sx={{ width: "100%" }}>
+          <Stack direction={"row-reverse"} alignItems={"center"} spacing={2} sx={{ width: "100%" }}>
             <TextField
               label="surah:ayah or arabic text"
               variant="outlined"
@@ -111,6 +97,9 @@ const VerseModal = () => {
                 ),
               }}
             />
+            <div>
+              {`Verses: ${Object.keys(globalState.fetchedVerses).length}`}
+            </div>
           </Stack>
           <Box sx={{ padding: "8px" }}>
             {Object.entries(globalState.fetchedVerses).map(([key, entry]) => (

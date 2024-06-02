@@ -108,6 +108,26 @@ export const deleteCapsulePhotos = createAsyncThunk(
   }
 );
 
+export const deleteCapsuleVerse = createAsyncThunk(
+  "capsule/deleteCapsuleVerse",
+  async ({ timelineId, capsuleId, verseId }, { dispatch, rejectWithValue }) => {
+    try {
+      const verseDocRef = doc(
+        firestore,
+        `capsule/${timelineId}/verses/${capsuleId}/versesCollection/${verseId}`
+      );
+      await deleteDoc(verseDocRef);
+
+      console.log("Verse deleted successfully");
+
+      // Dispatch an action to remove the verse from the Redux store
+      dispatch(removeVerse({ timelineId, capsuleId, verseId }));
+    } catch (error) {
+      console.error("Error deleting verse: ", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
 export const savePhoto = createAsyncThunk(
   "capsule/savePhoto",
   async (photo, { getState, rejectWithValue }) => {
@@ -138,7 +158,6 @@ export const savePhoto = createAsyncThunk(
   }
 );
 
-
 export const saveVerses = createAsyncThunk(
   "capsule/saveVerses",
   async (_, { getState, rejectWithValue }) => {
@@ -168,8 +187,9 @@ export const saveVerses = createAsyncThunk(
       const versesArray = Object.values(fetchedVerses);
       const promises = versesArray.map((verse) => {
         const verseId = uuidv4();
+        const verseWithId = { ...verse, id: verseId }; // Add the ID to the verse object
         const verseDocRef = doc(versesCollectionRef, verseId);
-        return setDoc(verseDocRef, verse);
+        return setDoc(verseDocRef, verseWithId);
       });
 
       await Promise.all(promises);
@@ -182,6 +202,7 @@ export const saveVerses = createAsyncThunk(
     }
   }
 );
+
 export const saveNewTimeLine = createAsyncThunk(
   "capsules/saveNewTimeLine",
   async ({ name }, { getState, rejectWithValue }) => {
@@ -256,7 +277,6 @@ export const fetchVerse = createAsyncThunk(
         `https://api.alquran.cloud/v1/ayah/${reference}`
       );
       const data = await response.json();
-      console.log("📢[globalSlice.js:202]: data: ", data);
       const verseText = data.data.text;
       const name = data.data.surah.name;
       return {
@@ -418,15 +438,36 @@ export const globalSlice = createSlice({
       });
     },
     setTimelineVerses: (state, action) => {
-      Object.entries(action.payload.verses).forEach(([capsuleId, verses]) => {
-        if (!state.timelines[action.payload.id].capsules[capsuleId]) {
-          state.timelines[action.payload.id].capsules[capsuleId] = {};
-        }
-        state.timelines[action.payload.id].capsules[capsuleId].verses = {
-          ...state.timelines[action.payload.id].capsules[capsuleId].verses,
-          ...verses,
-        };
-      });
+      const { timelineId, capsuleId, verses } = action.payload;
+      state.timelines[timelineId] = state.timelines[timelineId] || {};
+      state.timelines[timelineId].capsules =
+        state.timelines[timelineId].capsules || {};
+      state.timelines[timelineId].capsules[capsuleId] =
+        state.timelines[timelineId].capsules[capsuleId] || {};
+      state.timelines[timelineId].capsules[capsuleId].verses = {
+        ...state.timelines[timelineId].capsules[capsuleId].verses,
+        ...verses,
+      };
+    },
+    removeVerse: (state, action) => {
+      const { timelineId, capsuleId, verseId } = action.payload;
+      if (
+        state.timelines[timelineId] &&
+        state.timelines[timelineId].capsules[capsuleId] &&
+        state.timelines[timelineId].capsules[capsuleId].verses
+      ) {
+        delete state.timelines[timelineId].capsules[capsuleId].verses[verseId];
+      }
+    },
+    deleteFetchedVerse: (state, action) => {
+      const { verseId } = action.payload;
+      delete state.fetchedVerses[verseId];
+    },
+    updateFetchedVerseComment: (state, action) => {
+      const { verseId, comment } = action.payload;
+      if (state.fetchedVerses[verseId]) {
+        state.fetchedVerses[verseId].comments = comment;
+      }
     },
     setActiveTimeLine: (state, action) => {
       state.activeTimeline = action.payload;
@@ -529,6 +570,9 @@ export const {
   setTimelineCapsules,
   setTimelinePhotos,
   setTimelineVerses,
+  removeVerse,
+  deleteFetchedVerse, 
+  updateFetchedVerseComment 
 } = globalSlice.actions;
 
 export default globalSlice.reducer;
