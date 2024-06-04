@@ -140,7 +140,7 @@ const VerseModal = () => {
       </DialogContent>
       <DialogActions>
         <Stack direction={"row"} spacing={1}>
-          <Button onClick={handleSaveVerses} size="small">
+          <Button onClick={handleSaveVerses} size="large" variant="contained" disabled={loading}>
             Save Verses
           </Button>
         </Stack>

@@ -85,8 +85,8 @@ const ViewCapsule = ({ entry, capsuleId }) => {
             <Typography variant="body1" align="left">
               {entry.description}
             </Typography>
-            <ViewVerse capsuleId={capsuleId} />
             <Photos capsuleId={entry.id} />
+            <ViewVerse capsuleId={capsuleId} />
           </Stack>
         </Stack>
       </CardContent>

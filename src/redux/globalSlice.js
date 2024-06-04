@@ -193,7 +193,6 @@ export const saveVerses = createAsyncThunk(
       });
 
       await Promise.all(promises);
-
       console.log("Verses saved successfully");
       return versesArray;
     } catch (error) {
@@ -202,6 +201,29 @@ export const saveVerses = createAsyncThunk(
     }
   }
 );
+
+export const saveVerse = createAsyncThunk(
+  "capsule/saveVerse",
+  async ({ timelineId, capsuleId, verseId, comment }, { rejectWithValue }) => {
+    try {
+      // Get a reference to the verse document
+      const verseDocRef = doc(
+        firestore,
+        `capsule/${timelineId}/verses/${capsuleId}/versesCollection/${verseId}`
+      );
+
+      // Update the verse document with the new comment
+      await updateDoc(verseDocRef, { comments: comment });
+
+      console.log("Verse updated successfully");
+    } catch (error) {
+      console.error("Error updating verse: ", error);
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+
 
 export const saveNewTimeLine = createAsyncThunk(
   "capsules/saveNewTimeLine",
@@ -469,6 +491,19 @@ export const globalSlice = createSlice({
         state.fetchedVerses[verseId].comments = comment;
       }
     },
+    updateVerseComment: (state, action) => {
+      const { timelineId, capsuleId, verseId, comment } = action.payload;
+      if (
+        state.timelines[timelineId] &&
+        state.timelines[timelineId].capsules[capsuleId] &&
+        state.timelines[timelineId].capsules[capsuleId].verses &&
+        state.timelines[timelineId].capsules[capsuleId].verses[verseId]
+      ) {
+        state.timelines[timelineId].capsules[capsuleId].verses[
+          verseId
+        ].comments = comment;
+      }
+    },
     setActiveTimeLine: (state, action) => {
       state.activeTimeline = action.payload;
     },
@@ -571,8 +606,9 @@ export const {
   setTimelinePhotos,
   setTimelineVerses,
   removeVerse,
-  deleteFetchedVerse, 
-  updateFetchedVerseComment 
+  deleteFetchedVerse,
+  updateFetchedVerseComment,
+  updateVerseComment,
 } = globalSlice.actions;
 
 export default globalSlice.reducer;

@@ -1,6 +1,6 @@
 import useCapsuleVerse from "@/hooks/useCapsuleVerse"; // Adjust the import path accordingly
 import { setActiveCapsule, setMode } from "@/redux/globalSlice";
-import { Delete } from "@mui/icons-material";
+import { Delete, Edit, Save } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -10,15 +10,22 @@ import {
   IconButton,
   Stack,
   TextField,
+  Typography,
 } from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { deleteCapsuleVerse } from "../../../redux/globalSlice";
+import {
+  deleteCapsuleVerse,
+  updateVerseComment,
+  saveVerse,
+} from "@/redux/globalSlice";
 import VerseModal from "./verse-modal";
 
 const ViewVerse = ({ capsuleId }) => {
   const globalState = useSelector((state) => state.global);
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [verseToEdit, setVerseToEdit] = React.useState(null);
   const dispatch = useDispatch();
   const { id } = useParams();
 
@@ -47,22 +54,50 @@ const ViewVerse = ({ capsuleId }) => {
     );
   };
 
+  const handleEditVerse = (verse) => {
+    setVerseToEdit(verse);
+    setIsEditing(true);
+  };
+  const handleSaveVerse = (verse) => {
+    dispatch(
+      saveVerse({
+        timelineId: id,
+        capsuleId,
+        verseId: verse.id,
+        comment: verse.comments,
+      })
+    ).then(() => {
+      setIsEditing(false);
+    });
+  };
+
   const handleVerseCommentChange = (comment, verse) => {
     dispatch(
-      setActiveCapsule({
-        ...globalState.activeCapsule,
-        verses: globalState.activeCapsule.verses?.map((v) =>
-          v.reference === verse.reference ? { ...v, comment } : v
-        ),
+      updateVerseComment({
+        timelineId: id,
+        capsuleId,
+        verseId: verse.id,
+        comment,
       })
     );
   };
 
   return (
     <Stack sx={{ width: "100%" }} display={"flex"} justifyContent={"flex-end"}>
-      <Button variant="contained" onClick={handleStartAddVerse}>
-        Add Verse
-      </Button>
+      <Stack direction={"row"} spacing={1}>
+        <Button variant="contained" onClick={handleStartAddVerse}>
+          Add Verse
+        </Button>
+        {hasMore && (
+          <Button
+            variant="outlined"
+            onClick={loadMoreVerses}
+            disabled={loading}
+          >
+            {loading ? "Loading..." : "Load More"}
+          </Button>
+        )}
+      </Stack>
       <Box sx={{ padding: "8px" }}>
         {globalState.timelines?.[id]?.capsules?.[capsuleId]?.verses &&
           Object.values(
@@ -72,6 +107,24 @@ const ViewVerse = ({ capsuleId }) => {
               key={`verse-${index}`}
               sx={{ marginTop: 2, position: "relative" }}
             >
+              {(!isEditing || (isEditing && verse.id !== verseToEdit.id)) && (
+                <IconButton
+                  onClick={() => handleEditVerse(verse)}
+                  size="small"
+                  style={{ position: "absolute", top: 0, right: 32 }}
+                >
+                  <Edit fontSize="small" />
+                </IconButton>
+              )}
+              {isEditing && verse.id === verseToEdit.id && (
+                <IconButton
+                  onClick={() => handleSaveVerse(verse)}
+                  size="small"
+                  style={{ position: "absolute", top: 0, right: 32 }}
+                >
+                  <Save fontSize="small" />
+                </IconButton>
+              )}
               <IconButton
                 onClick={() => handleDeleteVerse(verse)}
                 size="small"
@@ -84,7 +137,7 @@ const ViewVerse = ({ capsuleId }) => {
                 subheader={verse.text}
               />
               <CardContent>
-                <Stack direction={"row"} spacing={1}>
+                {isEditing && verse.id === verseToEdit.id && (
                   <TextField
                     value={verse.comments}
                     onChange={(e) =>
@@ -93,22 +146,18 @@ const ViewVerse = ({ capsuleId }) => {
                     fullWidth
                     label="Comment"
                     variant="outlined"
-                    sx={{ mt: 1 }}
+                    sx={{
+                      mt: 1,
+                    }}
                     multiline
                   />
-                </Stack>
+                )}
+                {(!isEditing || (isEditing && verse.id !== verseToEdit.id)) && (
+                  <Typography>{verse.comments}</Typography>
+                )}
               </CardContent>
             </Card>
           ))}
-        {hasMore && (
-          <Button
-            variant="contained"
-            onClick={loadMoreVerses}
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Load More"}
-          </Button>
-        )}
       </Box>
       <VerseModal />
     </Stack>
